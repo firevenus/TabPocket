@@ -1,8 +1,8 @@
 {
-  "name": "tabnest",
-  "description": "TabNest - 会话收拢 · 书签收藏 · 浏览统计 三合一浏览器扩展",
+  "name": "tabpocket",
+  "description": "TabPocket - 标签收拢 · 收藏整理 · 待看 · 浏览统计 浏览器扩展",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "build": "vite build --config vite.config.mjs",
