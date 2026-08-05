@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "TabNest",
+  "description": "会话收拢 · 书签收藏 · 浏览统计 三合一",
+  "version": "0.2.0",
+  "permissions": [
+    "tabs",
+    "storage",
+    "alarms",
+    "contextMenus",
+    "unlimitedStorage",
+    "bookmarks",
+    "history"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "TabNest",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icon/16.png",
+    "32": "icon/32.png",
+    "48": "icon/48.png",
+    "96": "icon/96.png",
+    "128": "icon/128.png"
+  }
+}
