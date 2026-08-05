@@ -94,7 +94,7 @@ export default function BookmarksView() {
   const organize = async () => {
     if (busy) return;
     const ok = window.confirm(
-      '将读取浏览器全部收藏，导入到 TabNest 并自动分类归纳（重复的会跳过）。\n' +
+      '将读取浏览器全部收藏，导入到 TabPocket 并自动分类归纳（重复的会跳过）。\n' +
         '访问频率最高的网站会标记为「常用」。确定继续？',
     );
     if (!ok) return;
