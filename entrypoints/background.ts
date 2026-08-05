@@ -1,9 +1,9 @@
 // ============================================================
-// TabNest 后台（MV3 Service Worker，module 类型）
+// TabPocket 后台（MV3 Service Worker，module 类型）
 // 心跳计时（M3）+ 右键菜单收藏（M2）+ 消息路由（M1/M2/M3）
 // ============================================================
 import { browser } from 'wxt/browser';
-import type { TabNestMessage } from '../src/types';
+import type { TabPocketMessage } from '../src/types';
 import { addBookmark } from '../src/utils/bookmarks';
 import {
   collapseCurrentWindow,
@@ -24,20 +24,20 @@ browser.alarms.onAlarm.addListener((alarm) => {
 // --- M2: 右键菜单收藏 ---
 browser.contextMenus.create({
   id: 'tabnest-add-bookmark',
-  title: '收藏此页面到 TabNest',
+  title: '收藏此页面到 TabPocket',
   contexts: ['page'],
 });
 browser.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === 'tabnest-add-bookmark' && tab?.url) {
     void addBookmark(tab.url, tab.title ?? '').catch((err) =>
-      console.warn('[TabNest] 右键收藏失败:', err),
+      console.warn('[TabPocket] 右键收藏失败:', err),
     );
   }
 });
 
 // --- 消息路由 ---
 browser.runtime.onMessage.addListener(
-  (message: TabNestMessage, _sender, sendResponse) => {
+  (message: TabPocketMessage, _sender, sendResponse) => {
     void handleMessage(message)
       .then((result) => sendResponse({ success: true, ...result }))
       .catch((err) =>
@@ -47,10 +47,10 @@ browser.runtime.onMessage.addListener(
   },
 );
 
-console.log('[TabNest] background ready');
+console.log('[TabPocket] background ready');
 
 async function handleMessage(
-  message: TabNestMessage,
+  message: TabPocketMessage,
 ): Promise<Record<string, unknown>> {
   switch (message.type) {
     case 'COLLAPSE_TABS': {
