@@ -260,10 +260,6 @@ export default function BookmarksView() {
                   title={b.url}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={(e) => e.preventDefault()}
-                  onAuxClick={(e) => {
-                    if (e.button === 1) window.open(b.url, '_blank');
-                  }}
                 >
                   {b.title}
                 </a>
