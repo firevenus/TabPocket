@@ -205,6 +205,45 @@ button {
   gap: 8px;
 }
 
+.bm-main-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.bm-main-actions .btn-primary {
+  flex: 1;
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 10px 0;
+  border: 1px solid #0f6e56;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f6e56;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #e1f5ee;
+}
+
+.bm-done {
+  border: none;
+  background: #fbeaf0;
+  color: #993556;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 1px 8px;
+  border-radius: 10px;
+}
+
+.bm-done:hover {
+  background: #f4c0d1;
+}
+
 .bm-sub-actions {
   display: flex;
   gap: 8px;
