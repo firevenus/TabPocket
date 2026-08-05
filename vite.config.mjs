@@ -1,5 +1,5 @@
 // ============================================================
-// TabNest 手动 Vite 构建配置（绕开 WXT build 的环境兼容问题）
+// TabPocket 手动 Vite 构建配置（绕开 WXT build 的环境兼容问题）
 // 输出：dist/chrome-mv3（popup.html + background.js + chunks + icons + manifest.json）
 // ============================================================
 import { defineConfig } from 'vite';
