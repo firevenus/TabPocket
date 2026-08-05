@@ -1,5 +1,5 @@
 // ============================================================
-// TabNest 核心类型定义
+// TabPocket 核心类型定义
 // ============================================================
 
 // ---------- 会话收拢 ----------
@@ -59,7 +59,7 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 // ---------- 消息协议（popup/页面 ↔ background） ----------
-export type TabNestMessage =
+export type TabPocketMessage =
   | { type: 'SYNC_HISTORY' }
   | { type: 'OPEN_URL'; url: string }
   | { type: 'COLLAPSE_TABS' }
