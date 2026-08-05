@@ -54,6 +54,44 @@ export async function updateBookmarkTags(id: string, tags: string[]): Promise<vo
   }
 }
 
+// ---------- 待看（稍后阅读） ----------
+export const TAG_READ_LATER = '待看';
+
+/** 把页面加入「待看」：未收藏则新建，已收藏则补上待看标签 */
+export async function addToReadLater(url: string, title: string): Promise<void> {
+  const items = await loadBookmarks();
+  const existing = items.find((b) => b.url === url);
+  if (existing) {
+    if (!existing.tags.includes(TAG_READ_LATER)) {
+      existing.tags.push(TAG_READ_LATER);
+      await saveBookmarks(items);
+    }
+    return;
+  }
+  items.unshift({
+    id: crypto.randomUUID(),
+    url,
+    title: title || url,
+    tags: [TAG_READ_LATER],
+    createdAt: Date.now(),
+  });
+  await saveBookmarks(items);
+}
+
+/** 切换「待看」标记：看完移除 / 重新加入 */
+export async function toggleReadLater(id: string): Promise<void> {
+  const items = await loadBookmarks();
+  const target = items.find((b) => b.id === id);
+  if (target) {
+    if (target.tags.includes(TAG_READ_LATER)) {
+      target.tags = target.tags.filter((t) => t !== TAG_READ_LATER);
+    } else {
+      target.tags.push(TAG_READ_LATER);
+    }
+    await saveBookmarks(items);
+  }
+}
+
 // ---------- 搜索 / 聚合 ----------
 export function searchBookmarks(
   items: BookmarkItem[],
