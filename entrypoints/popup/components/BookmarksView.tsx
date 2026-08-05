@@ -3,6 +3,7 @@ import { browser } from 'wxt/browser';
 import type { BookmarkItem } from '../../../src/types';
 import {
   addBookmark,
+  addToReadLater,
   collectTags,
   deleteBookmark,
   domainOf,
@@ -11,6 +12,8 @@ import {
   loadBookmarks,
   organizeBrowserBookmarks,
   searchBookmarks,
+  TAG_READ_LATER,
+  toggleReadLater,
   updateBookmarkTags,
 } from '../../../src/utils/bookmarks';
 
@@ -37,7 +40,11 @@ export default function BookmarksView() {
     window.setTimeout(() => setToast(''), 2200);
   };
 
-  const tags = useMemo(() => collectTags(items), [items]);
+  const tags = useMemo(() => {
+    const all = collectTags(items);
+    // 「待看」置顶，方便无聊时快速点开
+    return [TAG_READ_LATER, ...all.filter((t) => t !== TAG_READ_LATER)];
+  }, [items]);
   const filtered = useMemo(
     () => searchBookmarks(items, query, activeTag),
     [items, query, activeTag],
@@ -58,6 +65,26 @@ export default function BookmarksView() {
       void refresh();
     } catch (err) {
       flash(err instanceof Error ? err.message : '收藏失败');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  // 当前标签页加入「待看」
+  const addCurrentToReadLater = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+      if (!tab?.url || !/^https?:/.test(tab.url)) {
+        flash('当前页面无法添加');
+        return;
+      }
+      await addToReadLater(tab.url, tab.title ?? '');
+      flash('已加入「待看」');
+      void refresh();
+    } catch (err) {
+      flash(err instanceof Error ? err.message : '添加失败');
     } finally {
       setBusy(false);
     }
@@ -138,14 +165,24 @@ export default function BookmarksView() {
   return (
     <div className="bookmarks-view">
       <div className="bm-toolbar">
-        <button
-          type="button"
-          className="btn-primary"
-          onClick={bookmarkCurrentTab}
-          disabled={busy}
-        >
-          {busy ? '处理中…' : '收藏当前页'}
-        </button>
+        <div className="bm-main-actions">
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={bookmarkCurrentTab}
+            disabled={busy}
+          >
+            {busy ? '处理中…' : '收藏当前页'}
+          </button>
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={addCurrentToReadLater}
+            disabled={busy}
+          >
+            加入待看
+          </button>
+        </div>
         <div className="bm-sub-actions">
           <button type="button" className="btn-mini" onClick={organize} disabled={busy}>
             整理浏览器收藏
@@ -261,6 +298,17 @@ export default function BookmarksView() {
                       ))
                     ) : (
                       <span className="bm-tag-none">无标签</span>
+                    )}
+                    {b.tags.includes(TAG_READ_LATER) && (
+                      <button
+                        type="button"
+                        className="bm-done"
+                        onClick={() => {
+                          void toggleReadLater(b.id).then(() => refresh());
+                        }}
+                      >
+                        看完
+                      </button>
                     )}
                     <button
                       type="button"
