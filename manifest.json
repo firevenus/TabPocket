@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "TabNest",
-  "description": "会话收拢 · 书签收藏 · 浏览统计 三合一",
-  "version": "0.2.0",
+  "name": "TabPocket",
+  "description": "标签收拢 · 收藏整理 · 待看 · 浏览统计",
+  "version": "0.3.0",
   "permissions": [
     "tabs",
     "storage",
@@ -17,7 +17,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "TabNest",
+    "default_title": "TabPocket",
     "default_popup": "popup.html"
   },
   "icons": {
