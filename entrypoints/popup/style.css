@@ -1,0 +1,370 @@
+:root {
+  font-family: 'Segoe UI', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  color-scheme: light;
+  color: #1f2328;
+  background: #ffffff;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 380px;
+  min-height: 480px;
+}
+
+button {
+  font-family: inherit;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 480px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafafa;
+  flex-shrink: 0;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.tab:hover {
+  color: #1f2328;
+}
+
+.tab.active {
+  color: #0f6e56;
+  border-bottom-color: #0f6e56;
+  font-weight: 500;
+  background: #ffffff;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.placeholder {
+  color: #9ca3af;
+  font-size: 13px;
+  text-align: center;
+  padding-top: 90px;
+}
+
+/* ---------- M1 会话收拢 ---------- */
+.btn-primary {
+  width: 100%;
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  background: #0f6e56;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #085041;
+}
+
+.btn-primary:disabled {
+  background: #9fe1cb;
+  cursor: default;
+}
+
+.toast {
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #e1f5ee;
+  color: #085041;
+  font-size: 12px;
+}
+
+.empty {
+  margin-top: 24px;
+  color: #9ca3af;
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.session-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.session-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.session-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.session-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1f2328;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.session-count {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: #0f6e56;
+  background: #e1f5ee;
+  border-radius: 10px;
+  padding: 1px 8px;
+}
+
+.session-meta {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.session-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-mini {
+  padding: 4px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-mini:hover {
+  background: #f3f4f6;
+}
+
+.btn-danger {
+  color: #a32d2d;
+  border-color: #f09595;
+}
+
+.btn-danger:hover {
+  background: #fcebeb;
+}
+
+.session-edit {
+  display: flex;
+  gap: 6px;
+}
+
+.name-input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #0f6e56;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+}
+
+/* ---------- M2 书签收藏 ---------- */
+.bm-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bm-sub-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.bm-search {
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.bm-search:focus {
+  border-color: #0f6e56;
+}
+
+.bm-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.tag-chip {
+  padding: 3px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #6b7280;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.tag-chip:hover {
+  border-color: #0f6e56;
+  color: #0f6e56;
+}
+
+.tag-chip.active {
+  background: #0f6e56;
+  border-color: #0f6e56;
+  color: #ffffff;
+}
+
+.bm-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bm-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.bm-favicon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #e6f1fb;
+  color: #185fa5;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bm-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.bm-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1f2328;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.bm-title:hover {
+  color: #0f6e56;
+  text-decoration: underline;
+}
+
+.bm-domain {
+  margin-top: 2px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.bm-tag-row {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.bm-tag {
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: #e1f5ee;
+  color: #085041;
+  font-size: 11px;
+}
+
+.bm-tag-none {
+  font-size: 11px;
+  color: #d1d5db;
+}
+
+.bm-tag-add {
+  border: none;
+  background: none;
+  color: #9ca3af;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.bm-tag-add:hover {
+  color: #0f6e56;
+}
+
+.bm-tag-edit {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+}
+
+.bm-del {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  color: #d1d5db;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.bm-del:hover {
+  color: #a32d2d;
+}
