@@ -126,7 +126,7 @@ export function domainOf(url: string): string {
 
 // ---------- 导出 / 导入（防数据丢失备份） ----------
 export interface BackupPayload {
-  app: 'tabnest';
+  app: 'tabpocket' | 'tabnest';
   version: 1;
   exportedAt: number;
   bookmarks: BookmarkItem[];
@@ -134,7 +134,7 @@ export interface BackupPayload {
 
 export function exportBookmarksJson(items: BookmarkItem[]): string {
   const payload: BackupPayload = {
-    app: 'tabnest',
+    app: 'tabpocket',
     version: 1,
     exportedAt: Date.now(),
     bookmarks: items,
@@ -144,8 +144,12 @@ export function exportBookmarksJson(items: BookmarkItem[]): string {
 
 export function importBookmarksJson(text: string): number {
   const parsed = JSON.parse(text) as Partial<BackupPayload>;
-  if (parsed.app !== 'tabnest' || !Array.isArray(parsed.bookmarks)) {
-    throw new Error('不是有效的 TabNest 备份文件');
+  // 兼容旧版 TabNest 备份（app 字段为 tabnest）
+  if (
+    (parsed.app !== 'tabpocket' && parsed.app !== 'tabnest') ||
+    !Array.isArray(parsed.bookmarks)
+  ) {
+    throw new Error('不是有效的 TabPocket 备份文件');
   }
   // 校验每条记录结构
   const valid = parsed.bookmarks.filter(
