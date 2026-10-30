@@ -11,6 +11,7 @@
 ### 🗂️ 标签收拢（OneTab 式）
 - 一键把当前窗口所有标签收拢成会话，还你一个干净的浏览器
 - 会话自动命名（时间 + 标签数），随时单条/批量恢复
+- **展开会话看清单个标签，点一下就单独打开**，不用整批恢复
 - 双击即可重命名，重启浏览器数据不丢
 
 ### ⭐ 收藏 + 一键整理（Raindrop 式）
@@ -32,17 +33,19 @@
 
 ## 安装
 
-### Edge（推荐）
-1. 打开 `edge://extensions`
-2. 开启左下角「开发人员模式」
-3. 点「加载解压缩的扩展」，选择构建产物目录：
-   ```
-   dist/chrome-mv3
-   ```
-4. 点工具栏 TabPocket 图标开始使用
+### 直接下载（最快，无需 Node.js）
+1. 到 [Releases](https://github.com/firevenus/TabPocket/releases) 下载最新的 `TabPocket-v*-edge.zip` 并解压
+2. Edge / Chrome 打开 `edge://extensions`（或 `chrome://extensions`）
+3. 开启左下角「开发人员模式」
+4. 点「加载解压缩的扩展」，选择解压出来的 `chrome-mv3` 文件夹
+5. 点工具栏 TabPocket 图标开始使用
 
-### Chrome
-同样方式：`chrome://extensions` → 开发者模式 → 加载已解压 → 选择 `dist/chrome-mv3`
+### 从源码构建
+```bash
+npm install
+npm run build     # 构建 → dist/chrome-mv3
+```
+然后在扩展管理页加载 `dist/chrome-mv3` 目录。
 
 > 正式上架 Edge/Chrome 商店后可直接一键安装（见 Roadmap）。
 
@@ -69,17 +72,26 @@ src/
     classify.ts                   # 域名自动分类规则
 entrypoints/
   background.ts                   # Service Worker：心跳计时 + 右键菜单 + 消息路由
-  popup/                          # 弹出面板（收拢 / 收藏 / 统计 三页签）
+  popup/                          # 弹出面板（收拢 / 收藏 / 统计 / 关于 四页签）
+    App.tsx                       # 页签外壳
+    components/
+      SessionsView.tsx            # 收拢页（含会话展开、单标签打开）
+      BookmarksView.tsx           # 收藏页（含待看、整理浏览器收藏、备份）
+      AboutView.tsx               # 关于页（版本 / 开源地址 / 反馈入口）
 ```
 
 ## Roadmap
 
 - [x] M0 项目骨架
-- [x] M1 标签收拢
+- [x] M1 标签收拢（含会话展开、单标签打开）
 - [x] M2 收藏 + 一键整理 + 备份 + 待看
-- [ ] M3 浏览统计（停留时长 + 热力图 + 排行榜）
-- [ ] M4 打磨：设置页、Edge/Chrome 商店上架
-- [ ] 会话数据纳入备份范围
+- [x] 关于页（版本号 / GitHub 仓库 / 反馈入口）
+- [ ] M3 浏览统计（停留时长 + 日历热力图 + 域名排行 + 时段分析）
+- [ ] M4 打磨：设置页（含每日自动收拢）、会话数据纳入备份、Edge/Chrome 商店上架
+- [ ] M5 整理增强：URL 层级分组、死链检测、按时间线分组
+- [ ] M6 可选：Google Drive 同步（本地优先 + 可选云同步，无自家服务器）
+
+> M5/M6 的功能思路借鉴自社区同类项目（jmu/tabnest、nayanswami/tabnest、OffBy1-tech/TabNest）。
 
 ## License
 
