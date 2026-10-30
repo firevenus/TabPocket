@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import SessionsView from './components/SessionsView';
 import BookmarksView from './components/BookmarksView';
+import AboutView from './components/AboutView';
 
-type TabKey = 'sessions' | 'bookmarks' | 'stats';
+type TabKey = 'sessions' | 'bookmarks' | 'stats' | 'about';
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'sessions', label: '收拢' },
   { key: 'bookmarks', label: '收藏' },
   { key: 'stats', label: '统计' },
+  { key: 'about', label: '关于' },
 ];
 
 function App() {
@@ -31,6 +33,7 @@ function App() {
         {tab === 'sessions' && <SessionsView />}
         {tab === 'bookmarks' && <BookmarksView />}
         {tab === 'stats' && <div className="placeholder">浏览统计 · M3</div>}
+        {tab === 'about' && <AboutView />}
       </main>
     </div>
   );
