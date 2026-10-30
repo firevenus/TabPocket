@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "TabPocket",
-  "description": "标签收拢 · 收藏整理 · 待看 · 浏览统计",
-  "version": "0.3.0",
+  "default_locale": "en",
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDesc__",
+  "version": "0.6.1",
   "permissions": [
     "tabs",
     "storage",
@@ -10,14 +11,15 @@
     "contextMenus",
     "unlimitedStorage",
     "bookmarks",
-    "history"
+    "history",
+    "idle"
   ],
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
   "action": {
-    "default_title": "TabPocket",
+    "default_title": "__MSG_extName__",
     "default_popup": "popup.html"
   },
   "icons": {

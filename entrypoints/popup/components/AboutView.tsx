@@ -1,37 +1,62 @@
 import { browser } from 'wxt/browser';
+import { useI18n, type LangPref } from '../../../src/i18n';
 
 const REPO_URL = 'https://github.com/firevenus/TabPocket';
 const ISSUES_URL = 'https://github.com/firevenus/TabPocket/issues';
 
+const LANGS: { value: LangPref; label: string }[] = [
+  { value: 'auto', label: '' }, // 文案取自词典
+  { value: 'zh', label: '中文' },
+  { value: 'en', label: 'English' },
+];
+
 export default function AboutView() {
+  const { t, pref, setPref } = useI18n();
   const version = browser.runtime.getManifest().version;
 
   return (
     <div className="about-view">
-      <div className="about-logo">TP</div>
-      <h2 className="about-name">TabPocket · 页袋</h2>
-      <p className="about-slogan">把网页收进口袋，需要时再掏出来。</p>
+      <img className="about-logo" src="icon/128.png" alt="TabPocket" />
+      <h2 className="about-name">{t('about.name')}</h2>
+      <p className="about-slogan">{t('about.slogan')}</p>
 
       <p className="about-desc">
-        标签收拢 · 收藏整理 · 待看 · 浏览统计，四合一浏览器扩展。
-        <br />
-        Manifest V3，数据 100% 本地，无需账号，没有广告。
+        {t('about.desc')
+          .split('\n')
+          .map((line, i) => (
+            <span key={i}>
+              {i > 0 && <br />}
+              {line}
+            </span>
+          ))}
       </p>
 
-      <div className="about-version">版本 v{version}</div>
+      <div className="about-version">{t('about.version', { v: version })}</div>
+
+      <div className="about-lang">
+        <span className="about-lang-label">{t('about.language')}</span>
+        {LANGS.map((l) => (
+          <button
+            key={l.value}
+            type="button"
+            className={pref === l.value ? 'tag-chip active' : 'tag-chip'}
+            onClick={() => void setPref(l.value)}
+          >
+            {l.value === 'auto' ? t('about.langAuto') : l.label}
+          </button>
+        ))}
+      </div>
 
       <a className="about-link" href={REPO_URL} target="_blank" rel="noreferrer">
-        GitHub 仓库
+        {t('about.repo')}
       </a>
 
-      <p className="about-invite">
-        觉得少了什么功能？或有什么好点子？欢迎到 GitHub Issues 提建议，我都会看：
-      </p>
+      <p className="about-invite">{t('about.invite')}</p>
       <a className="about-link" href={ISSUES_URL} target="_blank" rel="noreferrer">
-        提建议 / Issues
+        {t('about.issues')}
       </a>
 
-      <p className="about-foot">MIT License · © 2026 Enki Yan (firevenus)</p>
+      <p className="about-foot">{t('about.foot')}</p>
     </div>
   );
 }

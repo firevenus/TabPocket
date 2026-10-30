@@ -1,0 +1,40 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="plate" gradientUnits="userSpaceOnUse" x1="8" y1="2" x2="120" y2="126">
+      <stop offset="0" stop-color="#23ae84"/>
+      <stop offset="0.52" stop-color="#12805f"/>
+      <stop offset="1" stop-color="#075243"/>
+    </linearGradient>
+    <radialGradient id="glow" gradientUnits="userSpaceOnUse" cx="34" cy="16" r="98">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.17"/>
+      <stop offset="0.6" stop-color="#ffffff" stop-opacity="0.03"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cardFront" gradientUnits="userSpaceOnUse" x1="0" y1="24" x2="0" y2="78">
+      <stop offset="0" stop-color="#f6fffc"/>
+      <stop offset="0.5" stop-color="#e2f9f0"/>
+      <stop offset="1" stop-color="#c6f1e0"/>
+    </linearGradient>
+    <linearGradient id="cardBack" gradientUnits="userSpaceOnUse" x1="0" y1="16" x2="0" y2="78">
+      <stop offset="0" stop-color="#8ce2c4"/>
+      <stop offset="1" stop-color="#5ccfa7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 底板 -->
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#plate)"/>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#glow)"/>
+
+  <!-- 后一张标签页（露出右上角，暗示装了好几张） -->
+  <path d="M55 16 h32 a12 12 0 0 1 12 12 v58 h-56 v-58 a12 12 0 0 1 12 -12 z" fill="url(#cardBack)"/>
+
+  <!-- 前一张标签页 -->
+  <path d="M41 24 h32 a12 12 0 0 1 12 12 v52 h-56 v-52 a12 12 0 0 1 12 -12 z" fill="url(#cardFront)"/>
+
+  <!-- 口袋袋身 -->
+  <path d="M25 54 h78 a8 8 0 0 1 8 8 v26 a12 12 0 0 1 -12 12 h-70 a12 12 0 0 1 -12 -12 v-26 a8 8 0 0 1 8 -8 z" fill="#ffffff"/>
+
+  <!-- 袋口弧：透出底板背景 + 内侧阴影 -->
+  <path d="M25 54 H103 Q64 80 25 54 Z" fill="url(#plate)"/>
+  <path d="M25 54 H103 Q64 80 25 54 Z" fill="#04261c" opacity="0.15"/>
+</svg>

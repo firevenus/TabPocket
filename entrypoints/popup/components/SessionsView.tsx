@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { browser } from 'wxt/browser';
+import { locale, useI18n } from '../../../src/i18n';
 import type { Session } from '../../../src/types';
 
 interface ListResponse {
@@ -9,6 +10,7 @@ interface ListResponse {
 }
 
 export default function SessionsView() {
+  const { t } = useI18n();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState('');
@@ -40,10 +42,11 @@ export default function SessionsView() {
         error?: string;
       };
       if (res.success) {
-        flash(`已收拢 ${res.closedCount} 个标签`);
+        const n = res.closedCount ?? 0;
+        flash(t('sessions.collapsed', { n }, n));
         void refresh();
       } else {
-        flash(res.error ?? '收拢失败');
+        flash(res.error ?? t('sessions.collapseFailed'));
       }
     } finally {
       setBusy(false);
@@ -55,8 +58,12 @@ export default function SessionsView() {
       type: 'RESTORE_SESSION',
       sessionId: id,
     })) as { success: boolean; opened?: number; error?: string };
-    if (res.success) flash(`已恢复 ${res.opened} 个标签`);
-    else flash(res.error ?? '恢复失败');
+    if (res.success) {
+      const n = res.opened ?? 0;
+      flash(t('sessions.restored', { n }, n));
+    } else {
+      flash(res.error ?? t('sessions.restoreFailed'));
+    }
   };
 
   const remove = async (id: string) => {
@@ -93,13 +100,13 @@ export default function SessionsView() {
   return (
     <div className="sessions-view">
       <button type="button" className="btn-primary" onClick={collapse} disabled={busy}>
-        {busy ? '收拢中…' : '收拢全部标签'}
+        {busy ? t('sessions.collapsing') : t('sessions.collapseAll')}
       </button>
 
       {toast && <p className="toast">{toast}</p>}
 
       {sessions.length === 0 ? (
-        <p className="empty">还没有会话。点上方按钮把当前标签收拢成会话。</p>
+        <p className="empty">{t('sessions.empty')}</p>
       ) : (
         <ul className="session-list">
           {sessions.map((s) => (
@@ -117,17 +124,28 @@ export default function SessionsView() {
                     autoFocus
                   />
                   <button type="button" className="btn-mini" onClick={commitRename}>
-                    保存
+                    {t('sessions.save')}
                   </button>
                 </div>
               ) : (
-                <div className="session-head" onDoubleClick={() => { setEditingId(s.id); setEditName(s.name); }} title="双击重命名">
+                <div
+                  className="session-head"
+                  onDoubleClick={() => {
+                    setEditingId(s.id);
+                    setEditName(s.name);
+                  }}
+                  title={t('sessions.renameHint')}
+                >
                   <span className="session-name">{s.name}</span>
-                  <span className="session-count">{s.tabCount} 标签</span>
+                  <span className="session-count">
+                    {t('sessions.tabCount', { n: s.tabCount }, s.tabCount)}
+                  </span>
                   <button
                     type="button"
                     className="st-expand"
-                    title={expandedId === s.id ? '收起标签列表' : '展开标签列表'}
+                    title={
+                      expandedId === s.id ? t('sessions.collapseList') : t('sessions.expand')
+                    }
                     onClick={() => setExpandedId(expandedId === s.id ? null : s.id)}
                   >
                     {expandedId === s.id ? '▾' : '▸'}
@@ -135,7 +153,7 @@ export default function SessionsView() {
                 </div>
               )}
               <div className="session-meta">
-                {new Date(s.createdAt).toLocaleString('zh-CN', {
+                {new Date(s.createdAt).toLocaleString(locale(), {
                   month: 'numeric',
                   day: 'numeric',
                   hour: '2-digit',
@@ -144,18 +162,18 @@ export default function SessionsView() {
               </div>
               {expandedId === s.id && s.tabs.length > 0 && (
                 <ul className="st-tabs">
-                  {s.tabs.map((t, i) => (
+                  {s.tabs.map((tab, i) => (
                     <li key={i}>
                       <button
                         type="button"
                         className="st-tab"
-                        title={t.url}
-                        onClick={() => void openTab(t.url)}
+                        title={tab.url}
+                        onClick={() => void openTab(tab.url)}
                       >
                         <span className="st-tab-fav">
-                          {(hostOf(t.url) || '?').slice(0, 1).toUpperCase()}
+                          {(hostOf(tab.url) || '?').slice(0, 1).toUpperCase()}
                         </span>
-                        <span className="st-tab-title">{t.title || t.url}</span>
+                        <span className="st-tab-title">{tab.title || tab.url}</span>
                       </button>
                     </li>
                   ))}
@@ -163,14 +181,14 @@ export default function SessionsView() {
               )}
               <div className="session-actions">
                 <button type="button" className="btn-mini" onClick={() => void restore(s.id)}>
-                  恢复
+                  {t('sessions.restore')}
                 </button>
                 <button
                   type="button"
                   className="btn-mini btn-danger"
                   onClick={() => void remove(s.id)}
                 >
-                  删除
+                  {t('sessions.delete')}
                 </button>
               </div>
             </li>

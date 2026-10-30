@@ -6,6 +6,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import {
   copyFileSync,
+  cpSync,
   existsSync,
   mkdirSync,
   readFileSync,
@@ -46,10 +47,27 @@ function copyStaticAndManifest() {
       if (existsSync(srcHtml)) {
         renameSync(srcHtml, destHtml);
       }
+      // 统计报表页：从 entrypoints/stats/index.html 移到根目录 stats.html
+      const srcStats = resolve(outDir, 'entrypoints/stats/index.html');
+      const destStats = resolve(outDir, 'stats.html');
+      if (existsSync(srcStats)) {
+        renameSync(srcStats, destStats);
+      }
+      // 收藏体检页：从 entrypoints/audit/index.html 移到根目录 audit.html
+      const srcAudit = resolve(outDir, 'entrypoints/audit/index.html');
+      const destAudit = resolve(outDir, 'audit.html');
+      if (existsSync(srcAudit)) {
+        renameSync(srcAudit, destAudit);
+      }
       // 图标
       mkdirSync(resolve(outDir, 'icon'), { recursive: true });
       for (const f of ['16.png', '32.png', '48.png', '96.png', '128.png']) {
         copyFileSync(resolve(__dirname, 'public/icon', f), resolve(outDir, 'icon', f));
+      }
+      // 多语言资源（manifest 的 __MSG_*__ 与商店列表语言回退靠它）
+      const srcLocales = resolve(__dirname, '_locales');
+      if (existsSync(srcLocales)) {
+        cpSync(srcLocales, resolve(outDir, '_locales'), { recursive: true });
       }
       // manifest
       const manifest = JSON.parse(readFileSync(resolve(__dirname, 'manifest.json'), 'utf8'));
@@ -66,6 +84,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         popup: resolve(__dirname, 'entrypoints/popup/index.html'),
+        stats: resolve(__dirname, 'entrypoints/stats/index.html'),
+        audit: resolve(__dirname, 'entrypoints/audit/index.html'),
         background: resolve(__dirname, 'entrypoints/background.ts'),
       },
       output: {

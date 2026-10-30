@@ -1,0 +1,341 @@
+/* ============================================================
+   TabPocket 统计报表页（独立标签页，明亮主题）
+   ============================================================ */
+:root {
+  --tp-green: #0f6e56;
+  --tp-green-soft: #8fbfb0;
+  --tp-text: #1f2328;
+  --tp-text-dim: #6b7280;
+  --tp-text-faint: #9ca3af;
+  --tp-border: #e6eae8;
+  --tp-bg: #f6f8f7;
+  --tp-card: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--tp-bg);
+  color: var(--tp-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei',
+    'PingFang SC', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.report {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+/* ---------- 头部 ---------- */
+.report-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.report-title h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.report-sub {
+  color: var(--tp-text-faint);
+  font-size: 12px;
+}
+
+.report-ranges {
+  display: flex;
+  gap: 8px;
+}
+
+.range-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--tp-border);
+  background: var(--tp-card);
+  color: var(--tp-text-dim);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.range-btn:hover {
+  border-color: var(--tp-green-soft);
+  color: var(--tp-green);
+}
+
+.range-btn.active {
+  background: var(--tp-green);
+  border-color: var(--tp-green);
+  color: #fff;
+}
+
+.range-btn.ghost {
+  background: transparent;
+}
+
+/* ---------- KPI ---------- */
+.report-kpis {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.kpi {
+  background: var(--tp-card);
+  border: 1px solid var(--tp-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.kpi-label {
+  font-size: 12px;
+  color: var(--tp-text-faint);
+  margin-bottom: 4px;
+}
+
+.kpi-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--tp-text);
+  line-height: 1.3;
+}
+
+.kpi-value-sm {
+  font-size: 15px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- 卡片与图表 ---------- */
+.report-card {
+  background: var(--tp-card);
+  border: 1px solid var(--tp-border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+
+.report-card h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tp-text);
+}
+
+.chart {
+  width: 100%;
+}
+
+.chart-calendar {
+  height: 210px;
+}
+
+.chart-domain {
+  height: 330px;
+}
+
+.chart-hour {
+  height: 240px;
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 14px;
+}
+
+/* ---------- 空状态 ---------- */
+.report-empty {
+  background: var(--tp-card);
+  border: 1px dashed var(--tp-border);
+  border-radius: 10px;
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--tp-text-dim);
+  margin-bottom: 14px;
+}
+
+.report-empty p {
+  margin: 6px 0;
+}
+
+.report-empty-desc {
+  font-size: 12px;
+  color: var(--tp-text-faint);
+  max-width: 520px;
+  margin: 10px auto 0;
+  line-height: 1.7;
+}
+
+/* ---------- 排除域名 ---------- */
+.report-hint {
+  font-size: 12px;
+  color: var(--tp-text-faint);
+  margin: 0 0 10px;
+}
+
+.report-hint code {
+  background: #f1f4f3;
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-size: 11px;
+}
+
+.exclude-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.exclude-input {
+  flex: 1;
+  max-width: 320px;
+  padding: 7px 12px;
+  border: 1px solid var(--tp-border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  color: var(--tp-text);
+}
+
+.exclude-input:focus {
+  border-color: var(--tp-green);
+}
+
+.exclude-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.exclude-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eef4f1;
+  color: var(--tp-green);
+  border-radius: 999px;
+  padding: 4px 6px 4px 12px;
+  font-size: 12px;
+}
+
+.exclude-chip button {
+  border: none;
+  background: transparent;
+  color: var(--tp-green);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 4px;
+  opacity: 0.6;
+}
+
+.exclude-chip button:hover {
+  opacity: 1;
+}
+
+/* ---------- 后台状态诊断 ---------- */
+.diag-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.diag-item {
+  background: #f8faf9;
+  border: 1px solid #eef2f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-width: 0;
+}
+
+.diag-item span {
+  display: block;
+  font-size: 11px;
+  color: var(--tp-text-faint);
+  margin-bottom: 2px;
+}
+
+.diag-item b {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tp-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diag-ok {
+  color: var(--tp-green) !important;
+}
+
+.diag-bad {
+  color: #a32d2d !important;
+}
+
+.diag-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* ---------- 底部 ---------- */
+.report-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--tp-border);
+}
+
+.danger-btn {
+  padding: 7px 14px;
+  border: 1px solid #f0c4c4;
+  background: #fff;
+  color: #a32d2d;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.danger-btn:hover {
+  background: #fdf2f2;
+}
+
+@media (max-width: 1100px) {
+  .report-kpis {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .report-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .report-grid {
+    grid-template-columns: 1fr;
+  }
+}

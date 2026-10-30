@@ -3,6 +3,7 @@
 // 存储：chrome.storage.local，key = 'bookmarks'
 // ============================================================
 import { browser } from 'wxt/browser';
+import { t } from '../i18n/core';
 import type { BookmarkItem } from '../types';
 import { classifyDomain, isFrequentDomain } from './classify';
 
@@ -26,7 +27,7 @@ export async function addBookmark(
 ): Promise<BookmarkItem> {
   const items = await loadBookmarks();
   if (items.some((b) => b.url === url)) {
-    throw new Error('这个页面已经在收藏里了');
+    throw new Error(t('bm.alreadySaved'));
   }
   const item: BookmarkItem = {
     id: crypto.randomUUID(),
@@ -149,13 +150,13 @@ export function importBookmarksJson(text: string): number {
     (parsed.app !== 'tabpocket' && parsed.app !== 'tabnest') ||
     !Array.isArray(parsed.bookmarks)
   ) {
-    throw new Error('不是有效的 TabPocket 备份文件');
+    throw new Error(t('bm.importFailed'));
   }
   // 校验每条记录结构
   const valid = parsed.bookmarks.filter(
     (b) => b && typeof b.url === 'string' && typeof b.title === 'string',
   );
-  if (valid.length === 0) throw new Error('备份文件里没有有效书签');
+  if (valid.length === 0) throw new Error(t('bm.importFailed'));
   return valid.length;
 }
 

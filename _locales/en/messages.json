@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "TabPocket — Tab & Bookmark Manager",
+    "description": "Extension name shown in the browser and stores"
+  },
+  "extDesc": {
+    "message": "Collapse tabs into sessions, clean up and audit bookmarks, save pages for later, and track browsing stats. 100% local, no account.",
+    "description": "Short description shown in the browser and stores"
+  }
+}

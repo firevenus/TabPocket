@@ -6,6 +6,9 @@ dist/
 .output/
 extension-dist/
 
+# 本地试用包 / Release 附件（二进制，走 GitHub Releases 分发）
+release/
+
 # WXT generated
 .wxt/
 

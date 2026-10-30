@@ -3,6 +3,7 @@
 // 存储：chrome.storage.local，key = 'sessions'
 // ============================================================
 import { browser } from 'wxt/browser';
+import { getLang, t } from '../i18n/core';
 import type { Session, SessionTab } from '../types';
 
 const KEY = 'sessions';
@@ -29,7 +30,12 @@ function isValidTabUrl(url: string | undefined): url is string {
 function defaultName(count: number): string {
   const d = new Date();
   const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getMonth() + 1}月${d.getDate()}日 ${pad(d.getHours())}:${pad(d.getMinutes())} · ${count} 个标签`;
+  const hhmm = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const date =
+    getLang() === 'zh'
+      ? `${d.getMonth() + 1}月${d.getDate()}日 ${hhmm}`
+      : `${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${hhmm}`;
+  return t('sessions.defaultName', { date, n: count }, count);
 }
 
 // ---------- 收拢 ----------
@@ -49,7 +55,7 @@ export async function collapseCurrentWindow(): Promise<CollapseResult> {
   );
 
   if (collapsible.length === 0) {
-    throw new Error('当前窗口没有可收拢的标签');
+    throw new Error(t('sessions.nothingToCollapse'));
   }
 
   // 保留一个标签，避免窗口全关：优先保留当前活动标签
@@ -73,7 +79,7 @@ export async function collapseCurrentWindow(): Promise<CollapseResult> {
   };
 
   if (session.tabs.length === 0) {
-    throw new Error('没有可收拢的标签');
+    throw new Error(t('sessions.nothingToCollapse'));
   }
 
   const sessions = await loadSessions();
@@ -108,7 +114,7 @@ export async function renameSession(id: string, name: string): Promise<void> {
 export async function restoreSession(id: string): Promise<number> {
   const sessions = await loadSessions();
   const target = sessions.find((s) => s.id === id);
-  if (!target) throw new Error('会话不存在');
+  if (!target) throw new Error(t('sessions.notFound'));
 
   let opened = 0;
   for (const t of target.tabs) {

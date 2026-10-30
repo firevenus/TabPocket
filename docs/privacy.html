@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TabPocket — Privacy Policy / 隐私政策</title>
+    <style>
+      :root {
+        --fg: #1f2937;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --accent: #0f6e56;
+        --bg: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 40px 20px 80px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 15px/1.75 -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+          'Microsoft YaHei', sans-serif;
+      }
+      main { max-width: 760px; margin: 0 auto; }
+      h1 { font-size: 26px; margin: 0 0 6px; }
+      h2 {
+        font-size: 17px;
+        margin: 34px 0 10px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+      }
+      h3 { font-size: 15px; margin: 20px 0 6px; }
+      p, li { color: var(--fg); }
+      .sub { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
+      .lang { color: var(--muted); font-size: 13px; margin: 0 0 24px; }
+      .lang a { color: var(--accent); text-decoration: none; }
+      ul { padding-left: 22px; }
+      code {
+        background: #f3f5f4;
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 13px;
+      }
+      table { border-collapse: collapse; width: 100%; margin: 10px 0 4px; font-size: 14px; }
+      th, td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+      th { background: #f7f9f8; font-weight: 600; }
+      footer { margin-top: 36px; color: var(--muted); font-size: 12px; }
+      a { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>TabPocket — Privacy Policy</h1>
+      <p class="sub">Last updated: 31 October 2026 · Applies to the TabPocket browser extension</p>
+      <p class="lang"><a href="#zh">中文版在下方</a></p>
+
+      <p>
+        TabPocket is a local-first browser extension. It does not have a server, does not
+        require an account, and does not transmit your data anywhere. Everything the
+        extension records is stored inside your own browser profile on your own device.
+      </p>
+
+      <h2>1. What the extension stores</h2>
+      <table>
+        <tr>
+          <th>Data</th>
+          <th>Where it lives</th>
+          <th>Why</th>
+        </tr>
+        <tr>
+          <td>Saved tab sessions (page titles and URLs)</td>
+          <td><code>chrome.storage.local</code> on your device</td>
+          <td>To restore a collapsed set of tabs later</td>
+        </tr>
+        <tr>
+          <td>Bookmarks and tags you create in TabPocket</td>
+          <td><code>chrome.storage.local</code> on your device</td>
+          <td>To show and search your bookmark list</td>
+        </tr>
+        <tr>
+          <td>Browsing time statistics (domain, hour, duration, open count)</td>
+          <td>IndexedDB on your device</td>
+          <td>To render your own usage charts</td>
+        </tr>
+        <tr>
+          <td>Settings (language, excluded domains, tracking on/off)</td>
+          <td><code>chrome.storage.local</code> on your device</td>
+          <td>To remember your preferences</td>
+        </tr>
+      </table>
+      <p>
+        The extension never uploads, syncs, or backs up this data to any remote server. There
+        is no analytics, no telemetry, no advertising SDK, and no remote code. Removing the
+        extension deletes its local data.
+      </p>
+
+      <h2>2. Why each permission is requested</h2>
+      <table>
+        <tr><th>Permission</th><th>Reason</th></tr>
+        <tr>
+          <td><code>tabs</code></td>
+          <td>Read the title and URL of open tabs so they can be collapsed into a session
+            and restored, and count which page is currently active for the timer.</td>
+        </tr>
+        <tr>
+          <td><code>storage</code> / <code>unlimitedStorage</code></td>
+          <td>Save sessions, bookmarks, settings and statistics locally. Unlimited storage is
+            used so long-term statistics do not hit the default quota.</td>
+        </tr>
+        <tr>
+          <td><code>alarms</code></td>
+          <td>Run a once-per-minute heartbeat that settles how long the current page has been
+            in the foreground. This is the only periodic task.</td>
+        </tr>
+        <tr>
+          <td><code>idle</code></td>
+          <td>Stop the timer when you are away from the keyboard or the screen is locked, so
+            idle time is not counted as browsing.</td>
+        </tr>
+        <tr>
+          <td><code>bookmarks</code></td>
+          <td>Read your existing browser bookmarks for the "Organize bookmarks" and "Bookmark
+            audit" features, and let you delete a bookmark from the audit list. This is only
+            used when you open those two features.</td>
+        </tr>
+        <tr>
+          <td><code>history</code></td>
+          <td>Count how many times a bookmarked page was visited within a chosen period (30
+            days / 90 days / 1 year) for the audit ranking. History is only read, never
+            modified, and never leaves the device.</td>
+        </tr>
+        <tr>
+          <td><code>contextMenus</code></td>
+          <td>Add the right-click item "Add this page to TabPocket".</td>
+        </tr>
+      </table>
+
+      <h2>3. Data sharing</h2>
+      <p>
+        None. TabPocket does not sell, transfer, or disclose any user data to third parties.
+        No data is used for advertising, profiling, creditworthiness, or lending purposes.
+      </p>
+
+      <h2>4. Your control</h2>
+      <ul>
+        <li>Statistics can be switched off, and can be cleared at any time from the report page.</li>
+        <li>Excluded domains are never recorded.</li>
+        <li>Sessions and bookmarks can be exported to a JSON file you own, and deleted at will.</li>
+        <li>Uninstalling the extension removes all of its stored data.</li>
+      </ul>
+
+      <h2>5. Contact</h2>
+      <p>
+        Questions or requests:
+        <a href="https://github.com/firevenus/TabPocket/issues">GitHub Issues</a>.
+      </p>
+
+      <h2 id="zh">中文版</h2>
+
+      <h3>数据全部留在本机</h3>
+      <p>
+        TabPocket 是纯本地浏览器扩展：没有服务器、不需要账号、不上传任何数据。扩展记录的一切都保存在你自己电脑上的浏览器配置目录里。
+      </p>
+
+      <h3>保存了什么</h3>
+      <ul>
+        <li>收拢的标签会话（页面标题与网址）→ 本地 <code>chrome.storage.local</code></li>
+        <li>你在扩展内创建的收藏与标签 → 本地 <code>chrome.storage.local</code></li>
+        <li>浏览时长统计（域名、小时、时长、打开次数）→ 本地 IndexedDB</li>
+        <li>设置（语言、排除域名、统计开关）→ 本地 <code>chrome.storage.local</code></li>
+      </ul>
+      <p>
+        无统计分析、无遥测、无广告 SDK、无远程代码。卸载扩展即删除其本地数据。
+      </p>
+
+      <h3>权限用途</h3>
+      <ul>
+        <li><code>tabs</code>：读取标签页标题与网址，用于收拢/恢复会话与判断当前计时页面。</li>
+        <li><code>storage</code> / <code>unlimitedStorage</code>：本地保存会话、收藏、设置与统计。</li>
+        <li><code>alarms</code>：每分钟结算一次当前页面的停留时长，这是唯一的定时任务。</li>
+        <li><code>idle</code>：离开键盘或锁屏时停止计时，避免挂机刷时长。</li>
+        <li><code>bookmarks</code>：仅在「整理浏览器收藏」「收藏体检」中使用，读取原生书签并允许删除单条。</li>
+        <li><code>history</code>：仅用于统计收藏页面在指定区间内的访问次数，只读、不改写、不外传。</li>
+        <li><code>contextMenus</code>：提供右键「收藏此页面到 TabPocket」。</li>
+      </ul>
+
+      <h3>数据共享</h3>
+      <p>没有。不向任何第三方出售、转让或披露用户数据，也不用于广告、画像、信用评估等用途。</p>
+
+      <h3>你可以控制什么</h3>
+      <ul>
+        <li>统计可随时关闭，也可在报表页一键清空。</li>
+        <li>加入排除名单的域名不会被记录。</li>
+        <li>会话与收藏可导出为 JSON 备份，也可随时删除。</li>
+      </ul>
+
+      <h3>联系方式</h3>
+      <p><a href="https://github.com/firevenus/TabPocket/issues">GitHub Issues</a></p>
+
+      <footer>MIT License · © 2026 Enki Yan (firevenus)</footer>
+    </main>
+  </body>
+</html>
