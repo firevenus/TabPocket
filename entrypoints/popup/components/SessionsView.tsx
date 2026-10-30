@@ -14,6 +14,7 @@ export default function SessionsView() {
   const [toast, setToast] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     const res = (await browser.runtime.sendMessage({ type: 'LIST_SESSIONS' })) as ListResponse;
@@ -75,6 +76,20 @@ export default function SessionsView() {
     void refresh();
   };
 
+  // 单独打开会话中的某个标签（新标签页激活）
+  const openTab = async (url: string) => {
+    if (!url || !/^https?:/.test(url)) return;
+    await browser.tabs.create({ url, active: true });
+  };
+
+  const hostOf = (url: string): string => {
+    try {
+      return new URL(url).hostname.replace(/^www\./, '');
+    } catch {
+      return '';
+    }
+  };
+
   return (
     <div className="sessions-view">
       <button type="button" className="btn-primary" onClick={collapse} disabled={busy}>
@@ -109,6 +124,14 @@ export default function SessionsView() {
                 <div className="session-head" onDoubleClick={() => { setEditingId(s.id); setEditName(s.name); }} title="双击重命名">
                   <span className="session-name">{s.name}</span>
                   <span className="session-count">{s.tabCount} 标签</span>
+                  <button
+                    type="button"
+                    className="st-expand"
+                    title={expandedId === s.id ? '收起标签列表' : '展开标签列表'}
+                    onClick={() => setExpandedId(expandedId === s.id ? null : s.id)}
+                  >
+                    {expandedId === s.id ? '▾' : '▸'}
+                  </button>
                 </div>
               )}
               <div className="session-meta">
@@ -119,6 +142,25 @@ export default function SessionsView() {
                   minute: '2-digit',
                 })}
               </div>
+              {expandedId === s.id && s.tabs.length > 0 && (
+                <ul className="st-tabs">
+                  {s.tabs.map((t, i) => (
+                    <li key={i}>
+                      <button
+                        type="button"
+                        className="st-tab"
+                        title={t.url}
+                        onClick={() => void openTab(t.url)}
+                      >
+                        <span className="st-tab-fav">
+                          {(hostOf(t.url) || '?').slice(0, 1).toUpperCase()}
+                        </span>
+                        <span className="st-tab-title">{t.title || t.url}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
               <div className="session-actions">
                 <button type="button" className="btn-mini" onClick={() => void restore(s.id)}>
                   恢复
