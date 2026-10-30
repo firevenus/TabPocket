@@ -1,5 +1,10 @@
 # TabPocket · 页袋
 
+[![Release](https://img.shields.io/github/v/release/firevenus/TabPocket?label=release)](https://github.com/firevenus/TabPocket/releases)
+[![License](https://img.shields.io/github/license/firevenus/TabPocket)](LICENSE)
+[![Manifest](https://img.shields.io/badge/manifest-v3-blue)](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
+[![Local-first](https://img.shields.io/badge/data-100%25%20local-brightgreen)](#)
+
 > 把网页**收进口袋**，需要时再掏出来。
 > 标签收拢 · 收藏整理 · 待看 · 浏览统计 —— 一个浏览器扩展搞定。
 > Manifest V3 · 数据 100% 本地 · 无需账号 · 开源免费
