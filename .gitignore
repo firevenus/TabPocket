@@ -6,8 +6,11 @@ dist/
 .output/
 extension-dist/
 
-# 本地试用包 / Release 附件（二进制，走 GitHub Releases 分发）
-release/
+# Release 附件（二进制，走 GitHub Releases 分发）
+# 但上架文案（*.md）与商店图标素材要进仓库，否则换机即丢
+release/*.zip
+release/screenshots/
+release/TabPocket-v*/
 
 # WXT generated
 .wxt/
@@ -19,6 +22,10 @@ rolldown-test*
 # Logs
 *.log
 npm-debug.log*
+
+# Python 脚本缓存（scripts/*.py 用）
+__pycache__/
+*.pyc
 
 # OS
 .DS_Store

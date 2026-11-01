@@ -45,6 +45,8 @@
 - 排除域名名单：不想被统计的站点（支持子域匹配）一键排除
 - 数据存 IndexedDB，按「日期 + 小时 + 域名」聚合，不会随使用时间膨胀失控
 
+> 更细的时间分析（站点分组、用途分类、页面级排行、专注度、每日限额）规划见 [ROADMAP.md](ROADMAP.md) 的 M7。
+
 **数据 100% 存在本地**（chrome.storage / IndexedDB），不上传任何服务器，没有账号，没有广告。
 
 ## 安装
@@ -113,6 +115,7 @@ public/icon/                      # 图标产物：16/32/48/96/128.png（由脚�
 docs/privacy.html                 # 隐私政策页（商店提交需要 URL）
 scripts/
   build-icons.py                  # 从 assets/icon.svg 生成各尺寸 PNG（Edge 无头渲染）
+  make-screenshots.py             # 把随手截的图合成商店要求的 1280×800（去 alpha 通道）
   selftest-audit.mjs              # 收藏体检逻辑自测（mock 浏览器 API，node 直接跑）
   selftest-background.mjs         # 计时引擎自测（mock chrome + 假 IndexedDB + 可控时钟）
 ```
@@ -126,11 +129,17 @@ scripts/
 - [x] M3 浏览统计（停留时长心跳 + 日历热力图 + 域名排行 + 24 小时分布 + 排除域名）
 - [x] M3.5 收藏体检（书签访问频次排行 · 按页面/网站 · CSV 导出）
 - [x] 中英双语（跟随浏览器语言，可在关于页切换）
-- [ ] M4 打磨：设置页（含每日自动收拢、统计开关）、会话数据纳入备份、Edge/Chrome 商店上架
+- [ ] M4 打磨：设置页（含每日自动收拢、统计开关）、会话数据纳入备份、**深色主题**（跟随系统 + 手动切换，ECharts 需单独配深色色板）、Edge/Chrome 商店上架
 - [ ] M5 整理增强：URL 层级分组、死链检测、按时间线分组
 - [ ] M6 可选：Google Drive 同步（本地优先 + 可选云同步，无自家服务器）
+- [ ] **M7 时间统计（完整设计见 [ROADMAP.md](ROADMAP.md)）**
+  - [ ] M7.1 **域名合并规则**（`mail.google.com` 自动归入 Google，支持自定义「工作」「娱乐」合并组）· **站点 favicon**（走浏览器内置 `_favicon/`，不请求第三方，失败降级首字母色块）· 日/周/月区间与环比 · 数据保留期与导出
+  - [ ] M7.2 按用途分类聚合 · 页面级耗时长尾 · 专注度指标（单次停留 / 切换频次 / 碎片化）
+  - [ ] M7.3 单日时间线 · 每日限额与超时提醒（可选权限，默认关闭）
 
 > M5/M6 的功能思路借鉴自社区同类项目（jmu/tabnest、nayanswami/tabnest、OffBy1-tech/TabNest）。
+> M7 的域名合并规则、favicon，以及 M4 的深色主题，参考了 Time Tracker 等同类时间统计扩展的做法。
+> M7 的数据模型、迁移方案、统计口径、验收标准与排期见 [ROADMAP.md](ROADMAP.md)。
 
 ## License
 
