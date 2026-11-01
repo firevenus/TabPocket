@@ -684,27 +684,50 @@ python scripts/package.py
 
 ⚠️ 审核通过后用户端自动更新大约需要几小时（Chrome 每隔几小时检查一次），着急可以在 `chrome://extensions` 点「更新」。
 
-### 6.1 以后想自动化发版（现在不做）
+### 6.1 自动发版（凭据已就位，尚未实操）
 
 两家商店都有发布 API，**但第一次提交必须在网页后台手工做完**——产品 ID 由后台分配，没有第一次就没有 ID。所以这条只在上架之后才有意义。
 
-Edge 的流程是两步异步，容易踩坑：
+Edge 侧凭据已于 2026-11-02 建好，落在**仓库之外**：`~/.workbuddy/secrets/edge-publish.env`（`EDGE_CLIENT_ID` / `EDGE_API_KEY` / `EDGE_PRODUCT_ID`）。文件里三个值都用单引号包着，原因见下面的坑 #2。API key 到期时间 **2027-01-13 05:04（北京时间）**，到期前必须轮换。
+
+#### 一条命令替代四段 curl
 
 ```bash
-# 1. 传包（202 Accepted 只代表"开始处理"，不代表成功）
-curl -X POST "https://api.addons.microsoftedge.microsoft.com/v1/products/$PRODUCT_ID/submissions/draft/package" \
-  -H "Authorization: ApiKey $API_KEY" -H "X-ClientID: $CLIENT_ID" \
-  -H "Content-Type: application/zip" --data-binary @release/TabPocket-v0.6.1.zip -D -
+# 1. 只读自检（不动任何东西，先确认凭据活着）
+python scripts/edge-publish.py check --proxy http://127.0.0.1:19828
 
-# 2. 用上一步 Location 头里的 operationId 轮询到 Succeeded，再提交
-curl -X POST "https://api.addons.microsoftedge.microsoft.com/v1/products/$PRODUCT_ID/submissions" \
-  -H "Authorization: ApiKey $API_KEY" -H "X-ClientID: $CLIENT_ID" \
-  -H "Content-Type: application/json" -d '{"notes":"Release 0.7.0 — 见 release notes"}'
+# 2. 干跑一遍，看清要传哪个包、notes 多长
+python scripts/edge-publish.py release release/TabPocket-v0.7.0.zip \
+  --notes-file release/RELEASE_NOTES_v0.7.0.md --dry-run
+
+# 3. 真发
+python scripts/edge-publish.py release release/TabPocket-v0.7.0.zip \
+  --notes-file release/RELEASE_NOTES_v0.7.0.md --proxy http://127.0.0.1:19828
 ```
 
-两个坑：v1.1 用 `Client ID + API key` 走请求头，v1 用 OAuth Bearer，**两代鉴权并存**，抄网上示例容易混用；API key 会过期，到期不轮换会让发版静默失败（只返回 401，CI 里如果没检查状态码就当成功了）。
+脚本走的是官方四个端点：`POST .../submissions/draft/package`（传包，202 + `Location` 里的 operationId）→ `GET .../draft/package/operations/{id}` 轮询 → `POST .../submissions`（带 `{"notes": ...}`）→ `GET .../submissions/operations/{id}` 轮询。任一步不是 `Succeeded` 就停下来并以退出码 1 结束。
 
-优先级：低于所有功能开发。一两个月才发一次版，手工点几下不痛。详见 `ROADMAP.md` §6。
+#### 自检的三种返回码怎么读
+
+拿一个必然不存在的 operationId 去问，**故意让请求失败**，从失败方式反推凭据状态（这套判读是 2026-11-02 实测出来的，不是猜的）：
+
+| 返回 | 含义 |
+|---|---|
+| `404` | ✅ 鉴权通过，只是这个 operation 不存在 —— 凭据有效 |
+| `401` | ✗ API key 不对：要么过期，要么被 shell 展开坏了（见坑 #2） |
+| `403` | ✗ Client ID 不对，或不属于当前账号 |
+
+对照验证：把 `EDGE_API_KEY=BADKEY` 塞进环境变量再跑一次，立刻变 401 —— 说明 404 确实是「鉴权过了」。
+
+#### 三个坑（前两个已踩过）
+
+1. **v1.1 与 v1 鉴权不兼容**。v1.1 用 `Authorization: ApiKey <key>` + `X-ClientID` 两个头；v1 用 OAuth Bearer。网上示例大量还是 v1，抄了会一直 401。v1 已于 2024-12-31 停止支持。
+2. **key 里有 `$3` 这种片段，写进 shell 变量必须加单引号**。实测踩到：`EDGE_API_KEY=pjxf...$3.WL...` 在 `source` 时被展开成空串，key 静默变短、服务端只回 401，完全看不出是本地 shell 干的。脚本因此**自己解析 env 文件、不经过 shell**，文件里也用单引号兜住。
+3. **API 只管「更新已有提交」，不能改元数据**（描述、截图、隐私表单仍要进后台点）。所以发版脚本能省的是传包与提交这两步。
+
+优先级仍然低于功能开发。一两个月才发一次版，手工点几下不痛；脚本的价值在于**发版日少踩坑**，不是天天跑。详见 `ROADMAP.md` §6。
+
+⚠️ 凭据是账号级的，`Turn off API credentials` 可整体吊销；单个 key 有独立 Expiry，**过期后请求只有 401，不会有别的提示**。轮换时改那个 env 文件即可，脚本不用动。
 
 ### 6.2 后台分配的标识（务必留档）
 
@@ -717,13 +740,15 @@ curl -X POST "https://api.addons.microsoftedge.microsoft.com/v1/products/$PRODUC
 | **Product ID** | `7ddf02e0-65b7-44eb-9ae3-83ee50d1cfae` | §6.1 自动发版命令的 `$PRODUCT_ID`，**唯一无法用别的方式推出**的一项 |
 | **CRX ID** | `cpphloldpknfjhiicggmciffeebindag` | 商店签名后的扩展 ID，即 `edge://extensions` 里显示的那一串 |
 | **Store ID** | `0RDCKCDLP386` | 商店详情页短链（发布后才生效） |
-| **Public key** | `release/store/edge-public-key.pem` | 可离线复算 CRX ID，见下 |
+| **Public key** | `~/.workbuddy/secrets/keys/edge-public-key.pem`（**仓库外**） | 可离线复算 CRX ID，见下；**不入库** |
+| **Client ID / API key** | `~/.workbuddy/secrets/edge-publish.env`（**仓库外**） | 发版脚本用，见 §6.1；**值不写进本文档** |
 
 #### Chrome Web Store（`chrome.google.com/webstore/devconsole`）
 
 | 标识 | 值 | 用途 |
 |---|---|---|
 | **Extension ID** | `dfmjmpanhpclpcciffpchghefehdcdkb` | **永久不变**。商店链接、评价页链接、外部统计全用它 |
+| **Public key** | `~/.workbuddy/secrets/keys/chrome-public-key.pem`（**仓库外**） | 可离线复算 Extension ID，见下；**不入库** |
 
 发布后的两个链接（先记下来，`.item` 之后可直接用）：
 
@@ -738,7 +763,7 @@ curl -X POST "https://api.addons.microsoftedge.microsoft.com/v1/products/$PRODUC
 
 | 场景 | 扩展 ID | 存储空间 |
 |---|---|---|
-| 本地开发（加载已解压） | 由**目录路径**派生，换个目录就变 | 独立 |
+| 本地开发（加载已解压） | 由**目录路径**派生，换个目录就变（可用 manifest `key` 钉死，见下） | 独立 |
 | Edge 商店版 | `cpphloldpknfjhiicggmciffeebindag` | 独立 |
 | Chrome 商店版 | `dfmjmpanhpclpcciffpchghefehdcdkb` | 独立 |
 
@@ -756,30 +781,95 @@ Chrome 在上架时为你这一对密钥生成私钥，**同一账号下的所�
 
 所以：下载后立刻放到仓库之外的安全位置（密码管理器附件、加密压缩包），并在 `~/.workbuddy/refs/` 里记一句它存在哪。**不要放进本仓库** —— 这是公开的 MIT 项目。
 
-#### 用公钥复算 CRX ID
+#### 用公钥复算扩展 ID
 
-CRX ID 不是随机串，它完全由 RSA 公钥决定：**SHA-256 公钥的 DER 字节 → 取前 16 字节 → 每个十六进制半字节 0–15 依次映射到 a–p**。所以拿到公钥就能离线验算，不用信后台显示的字符串。
+扩展 ID 不是随机串，它完全由 RSA 公钥决定：**SHA-256 公钥的 DER 字节 → 取前 16 字节 → 每个十六进制半字节 0–15 依次映射到 a–p**。所以拿到公钥就能离线验算，不用信后台显示的字符串。两家商店把同一串东西叫不同名字（Edge 叫 CRX ID，Chrome 叫 Extension ID），算法完全一样。
 
 ```bash
-python scripts/crx-id.py release/store/edge-public-key.pem \
+python scripts/crx-id.py ~/.workbuddy/secrets/keys/edge-public-key.pem \
   --expect cpphloldpknfjhiicggmciffeebindag
+
+python scripts/crx-id.py ~/.workbuddy/secrets/keys/chrome-public-key.pem \
+  --expect dfmjmpanhpclpcciffpchghefehdcdkb
 ```
 
-本项目的实测结果：
+本项目的实测结果（两份公钥都是 RSA 2048、DER 均 294 字节，只有 SHA-256 不同）：
 
-```
-DER 长度  : 294 bytes
-密钥      : RSA 2048 bits, e=65537 (0x10001)
-SHA-256   : 2ff7beb3fad59788266c28554418d3064d2893c367288dca1de29aed0e98ec44
-CRX ID    : cpphloldpknfjhiicggmciffeebindag
-结果      : 一致
-```
+| | Edge | Chrome |
+|---|---|---|
+| DER 长度 | 294 bytes | 294 bytes |
+| 密钥 | RSA 2048 bits, e=65537 | RSA 2048 bits, e=65537 |
+| SHA-256 | `2ff7beb3…0e98ec44` | `35c9cf0d…96e3a09c` |
+| 扩展 ID | `cpphloldpknfjhiicggmciffeebindag` | `dfmjmpanhpclpcciffpchghefehdcdkb` |
+| 与后台显示比对 | 一致 | 一致 |
+
+**结论（2026-11-02 实测）**：两家公钥不同 → 两个 ID 必然不同，这是设计如此，不是哪里出错了；而每个 ID 都能由自己那份公钥复算出来、且与后台显示完全一致，说明「商店里那个条目」和「我留档的这份公钥」是同一个东西。这条链路一旦对上，后面发版、写统计、做跳转链接就不会指向错误的条目。
 
 不一致时脚本退出码 1，可以直接串进 CI。
 
-**这个脚本的用途不止于核对**：Chrome 上架后同样会给一个公钥和一个 ID，两边都用它算一遍，就能确认「商店里那个扩展」和「我本地构建的那个包」是同一个东西——这是验证供应链最简单的方式，比下载 .crx 解压比对省事得多。
+⚠️ **公钥与 `.crx` 一律不进仓库**（2026-11-02 定）：它们不含秘密，但也没必要对外暴露，公开仓库里放这些只会让人以为「这项目在散装分发扩展」。两份公钥放 `~/.workbuddy/secrets/keys/`，`.crx` 就留在下载目录；`.gitignore` 已挡住 `release/store/*.pem` 与 `*.crx`。**私钥永远不进任何地方**，只进密码管理器（Edge 的私钥由微软保管，你拿不到也不需要；Chrome 在同一账号下多个扩展会共用私钥）。
 
-⚠️ 公钥是公开信息，可以进仓库；**私钥永远不进仓库**（Edge 的私钥由微软保管，你拿不到也不需要；Chrome 在同一账号下多个扩展会共用私钥，需要本地妥善保管）。
+#### 让开发版与商店版共用同一个 ID（可选，暂未采用）
+
+`manifest.json` 支持一个 `key` 字段，写入后扩展 ID 就**不再由目录路径派生，而是由这个 key 派生**。把 Chrome 那一份写进去，本地「加载已解压」的 ID 就会等于商店 ID，两者从此共享 `chrome.storage` 与 IndexedDB——
+
+好处：本地调试能直接看到商店版的真实数据形态；想验证「用户从 0.6.1 升级上来数据会不会丢」这类问题时，不用先攒一遍假数据。
+
+代价与风险（这也是**当前两个包都没写这个字段**的原因）：
+
+- 仓库里的 `manifest.json` 是两家商店共用的。写了 Chrome 的 key，Edge 那边派生出的 ID 就和已分配的 `cpphlold…` 对不上；两个条目都已送审，改 manifest 意味着重新打包、重新提审。
+- 商店对 `key` 字段有自己的校验规则，与账号下那把私钥不匹配时可能直接拒包。**没实测过的事不当作可行**。
+- 一旦写进公开仓库的 manifest，就等于对外声明「这个 ID 归我」——按本项目口径公钥本就不入库，这条与之一致；但它会让 `dist/` 产物与商店签名版之间的差异多一处，日后排查要记得这条。
+
+真要做，正确姿势是**构建期注入**而不是改源文件：`vite.config.mjs` 里加一个环境变量分支，只在 `npm run build:dev` 时把 key 塞进产出的 `manifest.json`，源文件保持不带 key。留给 M4 打磨阶段，现在不动。
+
+### 6.3 验商店真正下发的那个包
+
+后台显示的「版本 0.6.1」只是字符串，不能证明商店里跑的代码就是你构建的那份。要闭环只有一条路：**把商店下发的 `.crx` 拆开，验它的签名，再和你提交的 zip 逐文件对哈希**。`.crx` 现在的用途就是这个 —— 不是拿来安装（Chrome 早已禁止从外部源装 crx）。
+
+#### CRX3 的结构（30 秒看懂）
+
+```
+Cr24 | 版本(4B, LE=3) | 头长度(4B, LE) | 头部 protobuf | zip 明文
+                                        ├─ 2: sha256_with_rsa   重复，每项含公钥+签名
+                                        ├─ 3: sha256_with_ecdsa 重复
+                                        └─ 10000: signed_header_data（内含 crx_id，16 字节）
+```
+
+签名对象不是整个文件，而是 `"CRX3 SignedData\0"` + 4 字节小端长度 + `signed_header_data` + zip 明文。`crx_id` 那 16 字节**就是扩展 ID 的二进制原形** —— 所以「公钥 → ID」和「包 → ID」两条路能对上。
+
+#### 一条命令跑完
+
+```bash
+python scripts/inspect-crx.py ~/Downloads/dfmjmpanhpclpcciffpchghefehdcdkb.crx \
+  --pubkey ~/.workbuddy/secrets/keys/chrome-public-key.pem \
+  --expect-id dfmjmpanhpclpcciffpchghefehdcdkb \
+  --diff-zip release/TabPocket-v0.6.1.zip \
+  --store-normalize
+```
+
+脚本只用标准库（PKCS#1 v1.5 验签是手写的，没装 `cryptography`），退出码 0 = 全通过，可直接串进 CI。
+
+#### 本项目 2026-11-02 的实跑结果
+
+| 检查项 | 结果 |
+|---|---|
+| 文件 | 301,989 bytes，SHA-256 `fd477694…d3e8f3` |
+| CRX 版本 / 头部 | 3 / 1309 bytes |
+| 内嵌 crx_id | `35c9cf0d7f2bf22855f27674547323a1` → `dfmjmpanhpclpcciffpchghefehdcdkb` ✅ 与后台一致 |
+| 公钥复算 ID | 与内嵌 crx_id 一致 ✅（同一条 16 字节） |
+| RSA 签名 | 2 个：**#1 商店侧钥匙**（ID `lfoeajgcchlidpicbabpmckkejpckcfb`）、**#2 本条目公钥 → 验签通过** ✅ |
+| ECDSA 签名 | 1 个（商店侧另有其私钥，本脚本不验；RSA 通道已足够定位归属） |
+| zip 完整性 | 26 个条目，CRC 全对 ✅ |
+| 包内 manifest | 无 `key` 字段 ✅，版本 `0.6.1`，权限与提交时一致（8 项） |
+| 与提交的 zip 比对 | **24 个文件逐一 SHA-256 全等** ✅ |
+| 唯一差异 | `_metadata/verified_contents.json`（商店注入）、`manifest.json` 多一行 `update_url` |
+
+**结论**：商店里跑的代码 = 我提交的那份构建产物，逐字节相同；差异只有商店签名流程必然注入的两处。这两个差异是**正常的**，别误判成被篡改 —— 也正因为如此，`--store-normalize` 会先剥掉它们再比。
+
+顺带一个副产品：`_metadata/verified_contents.json` 是 Google 自己签的「每文件哈希清单」，它存在这件事本身说明包走的是商店下发链路，而不是第三方重打包。
+
+> 复现命令里的 `--expect-id` 与 `--pubkey` 建议每次都带。只传 `.crx` 也能跑，但那只是「看一眼」，不构成验证。
 
 ---
 

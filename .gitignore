@@ -36,3 +36,8 @@ Thumbs.db
 # Editor
 .idea/
 .vscode/
+
+# 公钥、.crx 等验包素材一律不进仓库（2026-11-02 定的口径）
+# 放 ~/.workbuddy/secrets/keys/，脚本用 --pubkey 指向那里
+release/store/*.pem
+*.crx
