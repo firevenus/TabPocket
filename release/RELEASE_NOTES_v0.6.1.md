@@ -35,7 +35,7 @@ python scripts/build-icons.py
 
 覆盖式更新（保住现有会话、收藏、统计）：
 
-1. 把 `release\TabPocket-v0.6.1\` 里所有文件**复制覆盖**到当前加载的目录
+1. 解压 `TabPocket-v0.6.1.zip`，把里面的所有文件**复制覆盖**到当前加载的目录
 2. `edge://extensions` → TabPocket → **重新加载**
 3. 工具栏上的图标会变成新的
 
@@ -43,8 +43,6 @@ python scripts/build-icons.py
 
 ## 文件
 
-- `TabPocket-v0.6.1-edge.zip`（296 KB，24 个文件，`manifest.json` 在 zip 根部）
+- `TabPocket-v0.6.1.zip`（290 KB，24 个文件，`manifest.json` 在 zip 根部）
 - `showcase-icon.png` — 新旧对比 + 各尺寸 + 工具栏模拟
 - `store/icon-512.png` — 商店提交用的 512×512
-
-未推 GitHub。

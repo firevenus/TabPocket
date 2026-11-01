@@ -52,10 +52,10 @@
 ## 安装
 
 ### 直接下载（最快，无需 Node.js）
-1. 到 [Releases](https://github.com/firevenus/TabPocket/releases) 下载最新的 `TabPocket-v*-edge.zip` 并解压
+1. 到 [Releases](https://github.com/firevenus/TabPocket/releases) 下载最新的 `TabPocket-v*.zip` 并解压
 2. Edge / Chrome 打开 `edge://extensions`（或 `chrome://extensions`）
 3. 开启左下角「开发人员模式」
-4. 点「加载解压缩的扩展」，选择解压出来的 `chrome-mv3` 文件夹
+4. 点「加载解压缩的扩展」，选择解压出来的那个文件夹（里面直接就是 `manifest.json`，不要再往下点一层）
 5. 点工具栏 TabPocket 图标开始使用
 
 ### 从源码构建
