@@ -715,7 +715,7 @@ Edge 首次提交通过后，后台 **Extension overview** 页会分配四个标
 | **Product ID** | `7ddf02e0-65b7-44eb-9ae3-83ee50d1cfae` | §6.1 自动发版命令里的 `$PRODUCT_ID`，唯一无法用别的方式推出的一项 |
 | **CRX ID** | `cpphloldpknfjhiicggmciffeebindag` | 商店签名后的真实扩展 ID，见下方说明 |
 | **Store ID** | `0RDCKCDLP386` | 商店详情页短链用（发布后 URL 才会生效） |
-| **Public key** | 后台可复制（一长串 base64） | 可离线核对 CRX ID 是否正确 |
+| **Public key** | 已存档 `release/store/edge-public-key.pem` | 可离线复算 CRX ID，见下 |
 
 **CRX ID 与本地开发版不是同一个**，这一点会直接影响用户：
 
@@ -726,6 +726,31 @@ Edge 首次提交通过后，后台 **Extension overview** 页会分配四个标
 所以给用户的建议是：商店版可以装来验货，日常继续用开发版；或者在卸载开发版之前先导出收藏备份（**备份功能只覆盖收藏，不含会话** —— 这是目前已知的功能缺口，见 `ROADMAP.md`）。
 
 Chrome 那边同理，Chrome 上架后会分配另一个完全不同的 ID，与 Edge 的 CRX ID 也不通用。
+
+#### 用公钥复算 CRX ID
+
+CRX ID 不是随机串，它完全由 RSA 公钥决定：**SHA-256 公钥的 DER 字节 → 取前 16 字节 → 每个十六进制半字节 0–15 依次映射到 a–p**。所以拿到公钥就能离线验算，不用信后台显示的字符串。
+
+```bash
+python scripts/crx-id.py release/store/edge-public-key.pem \
+  --expect cpphloldpknfjhiicggmciffeebindag
+```
+
+本项目的实测结果：
+
+```
+DER 长度  : 294 bytes
+密钥      : RSA 2048 bits, e=65537 (0x10001)
+SHA-256   : 2ff7beb3fad59788266c28554418d3064d2893c367288dca1de29aed0e98ec44
+CRX ID    : cpphloldpknfjhiicggmciffeebindag
+结果      : 一致
+```
+
+不一致时脚本退出码 1，可以直接串进 CI。
+
+**这个脚本的用途不止于核对**：Chrome 上架后同样会给一个公钥和一个 ID，两边都用它算一遍，就能确认「商店里那个扩展」和「我本地构建的那个包」是同一个东西——这是验证供应链最简单的方式，比下载 .crx 解压比对省事得多。
+
+⚠️ 公钥是公开信息，可以进仓库；**私钥永远不进仓库**（Edge 的私钥由微软保管，你拿不到也不需要；Chrome 在同一账号下多个扩展会共用私钥，需要本地妥善保管）。
 
 ---
 
