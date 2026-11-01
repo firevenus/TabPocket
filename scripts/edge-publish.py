@@ -31,6 +31,7 @@ import os
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 BASE = 'https://api.addons.microsoftedge.microsoft.com'
@@ -116,10 +117,20 @@ def poll(url_of, op: str, cfg, proxy, interval: int, limit: int) -> bool:
             print(f'  [{attempt}] 操作不存在（404），停止轮询')
             return False
         if status.lower() in ('succeeded', 'success'):
-            print(f'  [{attempt}] Succeeded')
+            print(f'  [{attempt}] Succeeded：{body.get("message") or ""}')
             return True
         if status.lower() in ('failed', 'error'):
-            print(f'  [{attempt}] Failed：{body.get("message") or body.get("errorCode") or body}')
+            # 参考资料：errorCode 是机器可读的原因，errors 是明细列表
+            # 常见值：NoModulesUpdated（包没变）、InProgressSubmission（已有提交在审）、
+            #         SubmissionValidationError（提交校验不过）、CreateNotAllowed（不能新建）
+            print(f'  [{attempt}] Failed：{body.get("message") or "(无 message)"}')
+            if body.get('errorCode'):
+                print(f'           errorCode={body["errorCode"]}')
+            if body.get('errors'):
+                print(f'           errors={body["errors"]}')
+            return False
+        if code not in (200, 202) and not status:
+            print(f'  [{attempt}] HTTP {code}，无法解析状态：{body}')
             return False
         print(f'  [{attempt}] {status or f"HTTP {code}"} … 等 {interval}s')
         time.sleep(interval)
@@ -168,12 +179,29 @@ def do_upload(cfg, zip_path: str, proxy, interval: int, limit: int) -> bool:
                 op, cfg, proxy, interval, limit)
 
 
-def do_submit(cfg, notes: str, proxy, interval: int, limit: int) -> bool:
-    print(f'提交审核（notes {len(notes)} 字符）')
+def do_submit(cfg, notes: str, proxy, interval: int, limit: int,
+              notes_format: str = 'json') -> bool:
+    """提交审核。
+
+    关于 body 格式，官方两页说法不一致，故做成可切换：
+      · 使用指南（using-addons-api）与 curl 示例写的是 JSON：{"notes": "..."}
+      · API 参考（addons-api-reference）写的是 "Request body: <notes>, in plain text format"
+      · 官方 PowerShell 示例用哈希表传 body（等价于表单编码）
+    默认 JSON；若返回 400 再试 --notes-format text 或 form。**未实测过哪种被强制**。
+    """
+    if notes_format == 'json':
+        payload = json.dumps({'notes': notes}, ensure_ascii=False).encode('utf-8')
+        ctype = 'application/json'
+    elif notes_format == 'text':
+        payload = notes.encode('utf-8')
+        ctype = 'text/plain; charset=utf-8'
+    else:
+        payload = urllib.parse.urlencode({'notes': notes}).encode('utf-8')
+        ctype = 'application/x-www-form-urlencoded'
+    print(f'提交审核（notes {len(notes)} 字符，请求体 {ctype}）')
     url = f'{BASE}/v1/products/{cfg["EDGE_PRODUCT_ID"]}/submissions'
-    payload = json.dumps({'notes': notes}, ensure_ascii=False).encode('utf-8')
     code, headers, body = call('POST', url, cfg, body=payload,
-                               content_type='application/json', proxy=proxy)
+                               content_type=ctype, proxy=proxy)
     if code not in (200, 201, 202):
         print(f'  ✗ 提交被拒：HTTP {code} {body}')
         return False
@@ -199,6 +227,9 @@ def main() -> int:
                         help='轮询次数上限，默认 40')
     common.add_argument('--dry-run', action='store_true', default=argparse.SUPPRESS,
                         help='只打印将要做什么，不发请求')
+    common.add_argument('--notes-format', choices=['json', 'text', 'form'],
+                        default=argparse.SUPPRESS,
+                        help='提交时 notes 的请求体格式，默认 json；返回 400 可换 text/form')
 
     ap = argparse.ArgumentParser(description='Edge Add-ons Publish API 客户端',
                                  parents=[common])
@@ -218,6 +249,7 @@ def main() -> int:
     interval = getattr(args, 'interval', 15)
     limit = getattr(args, 'limit', 40)
     dry_run = getattr(args, 'dry_run', False)
+    notes_format = getattr(args, 'notes_format', 'json')
     cfg = load_env(env_file)
 
     if args.cmd == 'check':
@@ -243,9 +275,10 @@ def main() -> int:
 
     if args.cmd in ('submit', 'release'):
         if dry_run:
-            print(f'[dry-run] 将提交审核，notes 来自 {args.notes_file}（{len(notes)} 字符）')
+            print(f'[dry-run] 将提交审核，notes 来自 {args.notes_file}'
+                  f'（{len(notes)} 字符，请求体 {notes_format}）')
             return 0
-        if not do_submit(cfg, notes, proxy, interval, limit):
+        if not do_submit(cfg, notes, proxy, interval, limit, notes_format):
             return 1
 
     print('完成。状态仍以 Partner Center 后台为准：审核中 → 通过 → （视设置）手动点发布。')

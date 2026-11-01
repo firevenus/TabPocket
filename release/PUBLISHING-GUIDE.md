@@ -719,6 +719,47 @@ python scripts/edge-publish.py release release/TabPocket-v0.7.0.zip \
 
 对照验证：把 `EDGE_API_KEY=BADKEY` 塞进环境变量再跑一次，立刻变 401 —— 说明 404 确实是「鉴权过了」。
 
+#### 操作状态怎么解析（官方 schema）
+
+两个轮询端点返回的是同一个结构，**`status` 只有三个值**：
+
+```json
+{
+  "id": "{operationID}",
+  "createdTime": "Date Time",
+  "lastUpdatedTime": "Date Time",
+  "status": "InProgress | Succeeded | Failed",
+  "message": "Successfully updated package to xxx.zip",
+  "errorCode": "",
+  "errors": null
+}
+```
+
+注意两点与直觉不同的地方：
+
+- **轮询返回的是 `200`，不是 `202`**。`202 + Location` 只出现在「发起」那两个 POST 上。
+- 失败时真正有用的是 **`errorCode`**，`message` 只是给人看的散文。发版前最该认得的几个：
+
+| errorCode | 含义 | 处置 |
+|---|---|---|
+| `InProgressSubmission` | 已有提交在审，不能再提 | **等审核结束**，不能硬推 |
+| `NoModulesUpdated` | 包内容与线上一致，没东西可发 | 先确认版本号真的升了 |
+| `SubmissionValidationError` | 提交校验不过 | 按 `errors` 明细改 |
+| `ModuleStateUnPublishable` | 模块状态不合法 | 同上 |
+| `CreateNotAllowed` | 不允许新建产品 | 说明走错了端点，产品必须已存在 |
+
+⚠️ **对当下的实际影响**：0.6.1 还卡在 `In review`。这时候跑 `release` 会在最后一步拿到 `InProgressSubmission` —— 包已经传进 draft 了，但提交不上去。所以 **0.7.0 要等 0.6.1 过审**，或者先在后台把 0.6.1 撤下（那会清空审核进度）。
+
+#### 一个官方文档自己打架的地方
+
+`POST .../submissions` 的请求体格式，两页说法不同：
+
+- 使用指南说是 JSON：`{"notes": "..."}`（但它给的 curl 示例写成 `{"notes"="..."}`，用了等号，是笔误）
+- API 参考说是「plain text format」
+- 官方 PowerShell 示例用哈希表传 body（等价于表单编码）
+
+**哪种被强制、哪种只是兼容，没有实测依据。**脚本默认发 JSON，并提供 `--notes-format text|form` 兜底：真遇到 400 就换一种重试，不用改代码。
+
 #### 三个坑（前两个已踩过）
 
 1. **v1.1 与 v1 鉴权不兼容**。v1.1 用 `Authorization: ApiKey <key>` + `X-ClientID` 两个头；v1 用 OAuth Bearer。网上示例大量还是 v1，抄了会一直 401。v1 已于 2024-12-31 停止支持。
