@@ -385,23 +385,69 @@ tab manager, session manager, bookmark manager, bookmark audit, read later, brow
 ================================================================================
 [17]  CHROME TEST INSTRUCTIONS  (optional tab — only if review asks)
 ================================================================================
-No account or credentials are needed. Everything runs locally on the user's device.
+No account, credentials or extra information is needed. No sign-up, no server, no network request.
 
-How to test:
-1. Install. Click the toolbar icon to open the popup (4 tabs: Sessions / Bookmarks / Statistics / About).
-2. Open a few pages, then on Sessions click "Collapse all tabs" and then "Restore".
-3. On Bookmarks, click "Bookmark this page". Then click "Organize bookmarks" — this reads existing browser bookmarks (permission: bookmarks).
-4. Click "Bookmark audit" to open the full-page report. It ranks bookmarks by visit count over 30/90/365 days, using the read-only history permission.
-5. On Statistics, click "Open full report" for the charts and the background-status panel.
+EXPECT EMPTY LISTS ON FIRST INSTALL. Sessions, bookmarks and statistics all start empty. That is the normal initial state, not a broken feature; the steps below fill them in two minutes.
 
-The extension makes no network requests. It contains no remote code.
+Setup
+1. Open 5-6 ordinary web pages in the same window and leave them open.
+2. Click the toolbar icon. The popup has four tabs: Sessions / Bookmarks / Stats / About.
+
+Sessions
+3. On Sessions click "Collapse all tabs". Those tabs close and a session card appears in the list; expand the card to see its pages.
+4. Click "Restore" on the card. The pages open again.
+
+Bookmarks
+5. On Bookmarks click "Bookmark this page" to save the current page.
+6. Click "Organize bookmarks" and confirm. This reads the browser's existing bookmark tree (this is what the bookmarks permission is for), imports it and tags entries by site category.
+7. Set the "Sort" control to "Most visited" to see the list ranked by visit count.
+8. Click "Bookmark audit" for the full-page report: bookmarks ranked by how often they were opened over the last 30 / 90 / 365 days, by page or by site, with CSV export.
+
+Stats
+9. Browse normally for 2-3 minutes, switching tabs a few times, then open Stats and click "Open full report". A heartbeat settles foreground time once per minute; tab switches settle immediately. The timer pauses while the machine is idle or locked.
+
+About
+10. Language switch (English / Chinese), backup and export, excluded domains.
+
+Reviewer notes
+- History is read only, never modified: addUrl, deleteUrl, deleteRange and deleteAll are never called.
+- The idle state is read only to pause the timer. No keystrokes, clicks or page content are read: the build ships no content script and requests no host permissions.
+- All data lives in the browser profile and is removed on uninstall.
+- No remote code: no eval, no new Function, no external script, no wasm.
 
 
 ================================================================================
 [18]  EDGE NOTES FOR CERTIFICATION
 ================================================================================
-Same text as [17] — copy the whole block above into the
-"Notes for certification" box on the final submit page.
+No account, credentials or extra information is needed. No sign-up, no server, no network request.
+
+EXPECT EMPTY LISTS ON FIRST INSTALL. Sessions, bookmarks and statistics all start empty. That is the normal initial state, not a broken feature; the steps below fill them in two minutes.
+
+Setup
+1. Open 5-6 ordinary web pages in the same window and leave them open.
+2. Click the toolbar icon. The popup has four tabs: Sessions / Bookmarks / Stats / About.
+
+Sessions
+3. On Sessions click "Collapse all tabs". Those tabs close and a session card appears in the list; expand the card to see its pages.
+4. Click "Restore" on the card. The pages open again.
+
+Bookmarks
+5. On Bookmarks click "Bookmark this page" to save the current page.
+6. Click "Organize bookmarks" and confirm. This reads the browser's existing bookmark tree (this is what the bookmarks permission is for), imports it and tags entries by site category.
+7. Set the "Sort" control to "Most visited" to see the list ranked by visit count.
+8. Click "Bookmark audit" for the full-page report: bookmarks ranked by how often they were opened over the last 30 / 90 / 365 days, by page or by site, with CSV export.
+
+Stats
+9. Browse normally for 2-3 minutes, switching tabs a few times, then open Stats and click "Open full report". A heartbeat settles foreground time once per minute; tab switches settle immediately. The timer pauses while the machine is idle or locked.
+
+About
+10. Language switch (English / Chinese), backup and export, excluded domains.
+
+Reviewer notes
+- History is read only, never modified: addUrl, deleteUrl, deleteRange and deleteAll are never called.
+- The idle state is read only to pause the timer. No keystrokes, clicks or page content are read: the build ships no content script and requests no host permissions.
+- All data lives in the browser profile and is removed on uninstall.
+- No remote code: no eval, no new Function, no external script, no wasm.
 
 
 ================================================================================

@@ -58,7 +58,7 @@
 | 13 | ~~数据使用说明~~ | **当前表单没有这个文本框**，跳过 —— 解释由隐私政策页承担 | `[10]` |
 | 14 | **Privacy practices → 三条确认** | 三条全勾。**这就是「必须确认数据使用符合政策」那条报错的答案**，全页没有第四个确认框 | `[11]` |
 | 15 | **Distribution** | Visibility `Public` · Regions `All` · Pricing `Free` · Trader `Non-trader` | `[13]` |
-| 16 | **Test instructions**（可选） | 审核员操作指引 | `[17]` |
+| 16 | **Test instructions**（可选） | 审核员操作指引，与 `[18]` 同一份正文 | `[17]` |
 | 17 | **Submit for review** | 确认弹窗里可勾「审核通过后先暂存，手动发布」 | — |
 
 > ⚠️ 三个最容易卡住的地方：**第 10 步是 8 个独立输入框**（少填一个就会被打回，后台一次把你缺的全部列出来）、**第 12 步的分类勾选**比任何文字都重要（中文界面里「Web history」叫「**网络记录**」，按英文名找会以为漏了一整类）、**第 14 步的三条确认**就是那条「必须确认数据使用符合政策」的报错，不是另有勾选框。
@@ -277,7 +277,7 @@ Partner Center 的顺序和 Chrome 不同：先 Availability，再 Properties、
 | 2 | **Availability** | Visibility | `Public` | `[13]` |
 | 3 | Availability | Markets | 默认全部市场（含未来新增） | `[13]` |
 | 4 | **Properties** | Category | `Productivity` | `[04]` |
-| 5 | Properties | Website | `https://github.com/firevenus/TabPocket` | `[15]` |
+| 5 | Properties | Website | `https://firevenus.github.io/TabPocket/`（落地页，与 Chrome 的首页网址同一个） | `[15]` |
 | 6 | Properties | Support contact | `https://github.com/firevenus/TabPocket/issues` | `[15]` |
 | 7 | Properties | Mature content | 不勾 | `[15]` |
 | 8 | **Privacy** | Single purpose | 一段话，709 字符 | `[07]` |
@@ -291,11 +291,11 @@ Partner Center 的顺序和 Chrome 不同：先 Availability，再 Properties、
 | 16 | 详情页 | Description | 250–10,000 字符，2,154 字符 | `[03]` |
 | 17 | 详情页 | Extension logo | 300×300，1:1 | `[12]` |
 | 18 | 详情页 | Small / Large promotional tile | 可选：440×280 / 1400×560 | `[12]` |
-| 19 | 详情页 | Screenshots | 1280×800 或 **640×480**，**最多 6 张** | `[12]` |
+| 19 | 详情页 | Screenshots | **1280×800**（推荐）或 640×400，最多 6 张 | `[12]` |
 | 20 | 详情页 | YouTube video URL | 留空 | — |
 | 21 | 详情页 | **Search terms** | 见 §2.6，中英各一套 | `[16]` |
 | 22 | Store listings | 语言行 `Chinese (Simplified)` → Edit details | 填中文文案 | `listing-zh_CN.txt` |
-| 23 | **Submit** | Notes for certification | 审核员操作指引 | `[17]` |
+| 23 | **Submit** | Notes for certification \* | **必填**，粘 `[18]`（1,938 字符）；同时单选按钮选 No | `[18]` |
 | 24 | **Publish** | — | 审核最多 7 个工作日 | — |
 
 > ⚠️ 第 15 步是最容易懵的地方：Edge 的扩展名称和短描述**没有输入框**，直接读包里的 manifest。想改名只能改 `_locales` 并升版本号重传。我们已经是 `__MSG_extName__` 写法，所以中英两个语言页都会自动出现在 Store listings 里。
@@ -327,7 +327,7 @@ Partner Center 的顺序和 Chrome 不同：先 Availability，再 Properties、
 | 字段 | 填什么 |
 |---|---|
 | Category | **Productivity**（生产力） |
-| Website | `https://github.com/firevenus/TabPocket` |
+| Website | `https://firevenus.github.io/TabPocket/` |
 | Support contact | `https://github.com/firevenus/TabPocket/issues` |
 | Mature content | 不勾（无成人内容） |
 
@@ -349,7 +349,7 @@ Edge 的发布闸口和 Chrome 一样是「一次列全部缺口」，报错文�
 
 - **Description**：250–10,000 字符。粘贴 `paste/en/03-description.txt`（2,154 字符，两家都够）。中英各一页，中文页贴 `paste/zh_CN/03-description.txt`
 - **Extension logo**：1:1，推荐 300×300（最低 128×128）——直接传 `release/store/icon-300.png`（已按 300×300 生成好，不用自己缩）
-- **截图**：1280×800 或 **640×480**（Edge 没有 640×400 那一档，那是 Chrome 的），**最多 6 张**。用 `release/screenshots/` 下的成品，别传 `raw/`
+- **截图**：**1280×800**（推荐）或 640×400，**最多 6 张**。⚠️ 这里官方文档和后台界面自相矛盾——learn.microsoft.com 写的是 640×480，Partner Center 界面写的是 640×400。用 1280×800 就绕开了这个分歧，我们的图正是 1280×800
 - **上传后点 Duplicate**：logo、两张图块、截图每个字段下面都有 Duplicate，把英文那套一键复制到中文页，不用重复传五遍
 - **Search terms**：见下
 
@@ -407,22 +407,25 @@ tab manager, session manager, bookmark manager, bookmark audit, read later, brow
 
 ### 2.7 提交
 
-**Notes for certification**（在 Store listings 每行状态变成 `Complete`、点右上 **Publish** 之后打开的那个页面里填，不在这里）写一段给审核员看的操作指引：
+**Notes for certification**（点右上 **Publish** 之后弹出的那个页面里填，不在 Store listings 里）是本页仅有的两个必填项之一：
 
-```
-No account or credentials are needed. Everything runs locally.
+| 字段 | 填什么 |
+|---|---|
+| Does a tester need credentials… \* | 选 **「No, testers can access and test all functionality without any additional info」** |
+| **Notes for certification** \*（< 2,000 字符） | 粘 `paste/en/18-notes-for-certification.txt`（**1,938 字符**） |
 
-How to test:
-1. Install. Click the toolbar icon to open the popup (4 tabs: Sessions / Bookmarks / Stats / About).
-2. Open a few pages, click "Collapse all tabs" on the Sessions tab, then "Restore".
-3. On Bookmarks, click "Bookmark this page", then "Organize bookmarks" (this reads existing browser bookmarks; permission "bookmarks").
-4. Click "Bookmark audit" to open the full-page report. It ranks bookmarks by visit count over 30/90/365 days using the read-only history permission.
-5. On Stats, click "Open full report" for charts and the background-status panel.
+这段正文**不是**「操作步骤清单」，它要同时回答四件事，缺一件就容易被判「无法验证」：
 
-No network requests are made by the extension. No remote code.
-```
+1. **不需要账号** —— 直接对上上面那个单选按钮的答案
+2. **首次安装是空的，这是正常状态** —— 写在最前面、用大写标出。这是同类扩展被误拒的第一大原因：审核员装完打开 popup 看到空白，直接判「功能不完整」
+3. **每一步点哪个按钮** —— 用界面上的真实英文文案（已逐个核对 `src/i18n/messages.ts`），审核员能照着点
+4. **权限的用途落在哪一步** —— 在第 6 步点名 `bookmarks`，第 7/8 步点名 `history`，让理由和操作对得上
 
-**这一步别省**。扩展刚装是空的，审核员打开 popup 什么数据都没有，很可能判「功能不完整或无法使用」。一段操作指引能直接把这类误拒挡掉。
+最后一段用四条 bullet 把「只读」「无 content script」「数据在本地」「无远程代码」再说一遍。这四条和隐私页的申报互相印证，审核员交叉核对时不会撞到矛盾。
+
+**这一步绝对不能省。** Partner Center 原文写的是「Certification notes must be provided with every submission, even if similar information was provided previously. Submissions without certification notes may be flagged or failed during review.」——不是可选项。
+
+> Chrome 那边这个字段叫 **Test instructions**（`[17]`），是可选的。两边粘同一份正文，`17` 和 `18` 两个文件内容现在完全一致。
 
 点 **Publish** 后进入认证，通常 **1–7 个工作日**。通过后状态变 `In the Store`。
 
@@ -448,7 +451,7 @@ Partner Center 靠包内 `_locales/*/messages.json` 里的 i18n 键来判断有�
 | 审核时长 | 数小时 ~ 数天（敏感权限可能数周） | 1–7 个工作日 |
 | 更新 | 版本号必须严格递增，不能回退 | 同上 |
 | 数据声明 | Privacy practices：单用途 + 权限 + 远程代码 + 分类勾选 + **三项认证** | Privacy 页：同样五项，**也有三项认证**，措辞不同（`I certify that the following disclosures are true`） |
-| 截图 | 1–5 张，1280×800 或 640×400 | **最多 6 张**，1280×800 或 **640×480**（没有 640×400） |
+| 截图 | 1–5 张，1280×800 或 640×400 | **最多 6 张**，1280×800 或 640×400（文档写 640×480，与后台不一致） |
 | 宣传图块 | 440×280 / 1400×560，**可选** | 同尺寸，**可选**，且有 Duplicate 一键复制到其他语言 |
 
 > ⚠️ 两家的数据分类都**必须同时勾 Web history 和 User activity** —— `idle` 权限归在 User activity 下，只在说明文字里写"本地处理"不算数，分类勾漏了就是申报不实。
