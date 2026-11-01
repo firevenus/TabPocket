@@ -1,0 +1,3 @@
+Adds exactly one right-click menu item, "Add this page to TabPocket", so a page can be saved without opening the popup first.
+
+The click handler does one thing: it writes the active tab's title and URL into the user's local bookmark list. No submenus, no dynamic or per-site items, no reading of selected text, and no access to page content.

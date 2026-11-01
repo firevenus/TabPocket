@@ -1,0 +1,203 @@
+================================================================================
+  CHROME WEB STORE · PRIVACY PRACTICES TAB · PASTE-ONLY SHEET
+  TabPocket v0.6.1 · English
+================================================================================
+
+  HOW TO USE
+  Copy ONLY the text between the dashed lines under each heading.
+  Do not copy the heading itself, and do not copy the dashed lines.
+
+  The order below is the order the boxes appear on the page, top to bottom.
+  Fill all nine boxes, then the radio, then the three ticks, then the URL.
+
+================================================================================
+  1. SINGLE PURPOSE  (box: 单一用途说明)
+================================================================================
+--------------------------------------------------------------------------------
+TabPocket does one thing: it gives the user a single local place to keep track of the tabs, the bookmarks and the time they spend in their own browser.
+
+Everything in the extension serves that one purpose. A session is the set of tabs the user chose to keep. A bookmark is a page the user chose to keep. The statistics page counts how long those kept pages stayed in the foreground. The bookmark audit ranks the pages the user already bookmarked by how often they opened them. These are not separate products bundled together: they are four views of the same local record of the user's own browsing, and that record never leaves the browser. There is no second purpose, no account, no server and no analytics.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+  2. PERMISSION JUSTIFICATION · tabs   (box: 需请求 tabs 的理由)
+================================================================================
+--------------------------------------------------------------------------------
+Needed to list the title and URL of the tabs the user has chosen to keep. When the user clicks "Collapse all tabs", the extension reads those tabs and writes the list to a local session; "Restore" opens them again with chrome.tabs.create. The same read tells the timer which URL is currently in the foreground.
+
+Scope is the user's own windows only. Titles and URLs are written into the local session record and nothing else: they are never uploaded, never analysed, never matched against any server. The extension does not poll tabs on a schedule.
+
+There is no narrower permission. activeTab covers only one tab after a user gesture and cannot capture or restore a whole window; the tabs permission is what makes window-level session saving possible.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+  3. PERMISSION JUSTIFICATION · storage   (box: 需请求 storage 的理由)
+================================================================================
+--------------------------------------------------------------------------------
+chrome.storage.local holds the user's sessions, bookmarks, settings and language choice, so the popup and the background service worker read the same state and it survives browser restarts.
+
+storage.session is used for one volatile value only: the timer's current start point, which is meant to be discarded when the browser closes. Nothing is written to storage.sync, and there is no server-side storage of any kind.
+
+No narrower permission covers this. These records must survive a browser restart, which rules out storage.session, and they must be readable before the popup paints, which makes IndexedDB — already used for the much larger visit records — the wrong place for a few small settings.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+  4. PERMISSION JUSTIFICATION · alarms   (box: 需请求 alarms 的理由)
+================================================================================
+--------------------------------------------------------------------------------
+MV3 service workers are terminated after roughly 30 seconds of inactivity, so an in-memory timer cannot survive on its own. A short repeating alarm (one minute by default, user-configurable down to 30 seconds) wakes the worker to settle how long the current page stayed in the foreground, then stops.
+
+This is the only periodic task in the extension. It is created once, reused if it already exists, performs no network request, and is cleared when the user pauses tracking or uninstalls.
+
+Without it, foreground time accumulated between worker suspensions would simply be lost, and the statistics page would be inaccurate.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+  5. PERMISSION JUSTIFICATION · contextMenus   (box: 需请求 contextMenus 的理由)
+================================================================================
+--------------------------------------------------------------------------------
+Adds exactly one right-click menu item, "Add this page to TabPocket", so a page can be saved without opening the popup first.
+
+The click handler does one thing: it writes the active tab's title and URL into the user's local bookmark list. No submenus, no dynamic or per-site items, no reading of selected text, and no access to page content.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+  6. PERMISSION JUSTIFICATION · unlimitedStorage
+     (box: 需请求 unlimitedStorage 的理由)
+================================================================================
+--------------------------------------------------------------------------------
+Long-term statistics accumulate one small record per visited page per day and are never pruned automatically, so the extension's own storage grows without a natural ceiling.
+
+unlimitedStorage exempts the extension's origin from the browser's storage quota, so a quota error cannot silently stop the statistics after months of use. Without it the extension would have to delete the user's older history data to keep writing.
+
+The permission grants no access to the user's files, no access to page content, and no additional network capability. It only removes the quota ceiling on data the extension already owns.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+  7. PERMISSION JUSTIFICATION · bookmarks   (box: 需请求 bookmarks 的理由)
+================================================================================
+--------------------------------------------------------------------------------
+Used by two features the user starts explicitly: "Organize bookmarks" and "Bookmark audit".
+
+Organize reads the existing bookmark tree so the user can see what is already saved before folding it into TabPocket's own list. The audit flattens the same tree into one table so the user can rank what they saved. Writing (create/remove a single bookmark) happens only after a click in those two screens; nothing runs in the background.
+
+Bookmarks never leave the device and are never sent to a server. There is no narrower permission: the user's real bookmark tree is exactly what this permission exposes, and no other API can read it.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+  8. PERMISSION JUSTIFICATION · history   (box: 需请求 history 的理由)
+================================================================================
+--------------------------------------------------------------------------------
+Used only by the bookmark views, whose entire value is how often a saved page was actually opened.
+
+The bookmark list is sorted by lifetime visits: one chrome.history.search call builds an in-memory URL to count map, reused for a short while. The bookmark audit needs counts inside a chosen period (30/90/365 days) and history.search only returns a lifetime total, so the audit calls getVisits per bookmarked URL and filters by visitTime locally.
+
+It is strictly read-only: deleteUrl, deleteRange, deleteAll and addUrl are never called. Counts are matched against the user's own bookmarks, shown only in the interface, never transmitted, never stored on a server, never used for advertising or profiling.
+
+There is no narrower permission, because the open count only exists behind history.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+  9. PERMISSION JUSTIFICATION · idle   (box: 需请求 idle 的理由)
+================================================================================
+--------------------------------------------------------------------------------
+Used to stop counting when the user has walked away. chrome.idle.onStateChanged reports "idle" and "locked"; the timer pauses while the machine is unattended, so a page left open overnight is not recorded as hours of reading.
+
+Only the state is read. The activity type is never inspected, nothing about the user is stored or transmitted, and a 300-second threshold is used so brief pauses do not produce false gaps.
+
+There is no narrower API: nothing else in the platform reports that the machine is unattended.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+  10. REMOTE CODE
+      First tick the radio "No, I am not using remote code".
+      The reason box is usually disabled after that. If it still demands text,
+      paste the paragraph below.
+================================================================================
+--------------------------------------------------------------------------------
+No. The package ships all of its JavaScript: nothing is fetched or evaluated at runtime.
+
+There is no eval(), no new Function(), no dynamic import of a remote URL, and no remote script or wasm file in the build output. The manifest declares no content_security_policy override, so the MV3 default (script-src 'self') applies unchanged. The extension makes no network requests at all.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+  11. DATA USAGE — TICK THESE TWO, NOTHING ELSE
+================================================================================
+
+  [x] Web history
+        Chinese label: 网络记录
+        Help text: list of web pages a user has visited, with related data such
+        as page titles and visit times.
+        Why: the bookmark list and the audit count how often a saved page was
+        opened.
+
+  [x] User activity
+        Chinese label: 用户活动
+        Why: the idle permission belongs to this category. Leaving it unticked
+        while shipping idle is a false declaration and is checked against the
+        manifest.
+
+  [ ] Personally identifiable information
+  [ ] Health information
+  [ ] Financial and payment information
+  [ ] Authentication information
+  [ ] Personal communications
+  [ ] Location
+  [ ] Website content
+
+  Note: the extension declares no host_permissions and no content_scripts. It
+  does not read page DOM, clipboard or form input, so "Website content" must
+  stay unticked.
+
+
+================================================================================
+  12. DATA USAGE — EXPLANATION TEXT
+      Only exists if the dashboard offers a free-text box. On the current form
+      there is none (nine ticks, three confirmations, then the URL), so skip
+      this block if you do not see an input field.
+================================================================================
+--------------------------------------------------------------------------------
+Web history: the extension reads the user's own history to count how often each already-saved bookmark was opened, so the list and the audit can rank them. The counting happens in memory inside the browser. Nothing is uploaded, there is no server, no account and no analytics; the numbers are shown only to the user, on their own screen.
+
+User activity: the idle state is read for one purpose only, to pause the local timer when the user steps away or locks the screen, so unattended time is not counted as browsing time. The state is evaluated on the spot and is never stored, logged or transmitted.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+  13. CERTIFICATIONS — TICK ALL THREE
+================================================================================
+
+  [x] I do not sell or transfer user data to third parties, outside of the
+      approved use cases.
+
+  [x] I do not use or transfer user data for purposes that are unrelated to my
+      item's single purpose.
+
+  [x] I do not use or transfer user data to determine creditworthiness or for
+      lending purposes.
+
+  These three ticks ARE the answer to the publish error "必须确认您的数据使用情况
+  符合我们的开发者计划政策". There is no fourth confirmation checkbox on the page
+  in the current console — the three ticks are the whole requirement.
+
+
+================================================================================
+  14. PRIVACY POLICY URL
+================================================================================
+--------------------------------------------------------------------------------
+https://firevenus.github.io/TabPocket/privacy.html
+--------------------------------------------------------------------------------
+
+================================================================================
+  END
+================================================================================

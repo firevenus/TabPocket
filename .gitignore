@@ -9,7 +9,9 @@ extension-dist/
 # Release 附件（二进制，走 GitHub Releases 分发）
 # 但上架文案（*.md）与商店图标素材要进仓库，否则换机即丢
 release/*.zip
-release/screenshots/
+# 合成前的原始截图不入库（尺寸不合规、且可能含个人书签/会话名）；
+# 合成后的商店成品要留，换机重装时不用再截一遍
+release/screenshots/raw/
 release/TabPocket-v*/
 
 # WXT generated

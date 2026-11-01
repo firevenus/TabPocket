@@ -1,0 +1,9 @@
+CHROME  Distribution tab
+  Visibility            Public
+  Regions               All regions
+  Pricing               Free
+  Trader status         Non-trader  (individual, non-commercial)
+
+EDGE    Availability tab
+  Visibility            Public
+  Markets               All markets (default; includes future markets)

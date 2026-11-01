@@ -1,0 +1,10 @@
+No account or credentials are needed. Everything runs locally on the user's device.
+
+How to test:
+1. Install. Click the toolbar icon to open the popup (4 tabs: Sessions / Bookmarks / Statistics / About).
+2. Open a few pages, then on Sessions click "Collapse all tabs" and then "Restore".
+3. On Bookmarks, click "Bookmark this page". Then click "Organize bookmarks" — this reads existing browser bookmarks (permission: bookmarks).
+4. Click "Bookmark audit" to open the full-page report. It ranks bookmarks by visit count over 30/90/365 days, using the read-only history permission.
+5. On Statistics, click "Open full report" for the charts and the background-status panel.
+
+The extension makes no network requests. It contains no remote code.

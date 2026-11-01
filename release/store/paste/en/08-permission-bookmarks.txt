@@ -1,0 +1,5 @@
+Used by two features the user starts explicitly: "Organize bookmarks" and "Bookmark audit".
+
+Organize reads the existing bookmark tree so the user can see what is already saved before folding it into TabPocket's own list. The audit flattens the same tree into one table so the user can rank what they saved. Writing (create/remove a single bookmark) happens only after a click in those two screens; nothing runs in the background.
+
+Bookmarks never leave the device and are never sent to a server. There is no narrower permission: the user's real bookmark tree is exactly what this permission exposes, and no other API can read it.

@@ -1,0 +1,24 @@
+TabPocket is a local-first browser extension that keeps your tabs, bookmarks and browsing stats in one small pocket.
+
+■ Collapse tabs into sessions
+Close 30 open tabs in one click and get a tidy session card back. Expand the card to see every tab, open any single one, restore the whole session when you need it again. Sessions survive browser restarts.
+
+■ Bookmarks, organised
+Bookmark the current page or right-click any page. Tag bookmarks, search across title / URL / tag, and keep a "Read Later" list for the pages you don't have time for right now.
+
+■ Organize what your browser already has
+Read your existing browser bookmarks, import them, auto-tag them by site category (dev, finance, video, social, shopping, news, tools, office, gaming, learning, music, writing, travel) and mark the sites you visit most as "Frequent".
+
+■ Bookmark audit
+See which of your bookmarks you actually use. TabPocket ranks every bookmarked page by how many times you opened it in the last 30 days, 90 days or a year — by page or by site — and shows how many you haven't touched at all. Export the result to CSV and clean up the dead weight.
+
+■ Browsing stats
+A quiet timer records how long you spend on each site and turns it into a calendar heatmap, a top-12 site ranking and a 24-hour distribution. Every minute is settled by a heartbeat, tab switches settle instantly, and the timer stops when you are idle or locked.
+
+■ What it reads
+To rank your bookmarks and to show where your time goes, TabPocket reads your browsing history (page titles, URLs and visit times), your bookmark tree, and whether the machine is idle. All of it is read on your own device and used only for those two features — never uploaded, never shared, never used for advertising.
+
+■ Private by design
+No account. No server. No analytics, no ads, no remote code. Sessions, bookmarks and statistics never leave your device — they live in your browser profile and disappear when you uninstall. Exclude any domain from tracking, and clear statistics whenever you want.
+
+Manifest V3. Open source (MIT) at github.com/firevenus/TabPocket. Suggestions and bug reports are welcome in GitHub Issues.

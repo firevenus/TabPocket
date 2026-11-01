@@ -1,29 +1,58 @@
 #!/usr/bin/env python3
-"""从 assets/icon.svg 生成 TabPocket 扩展所需的全部图标 PNG。
+"""从 assets/*.svg 生成 TabPocket 扩展与商店所需的全部图标 PNG。
 
-用法：  python scripts/build-icons.py
+用法：
+    python scripts/build-icons.py            # 全部重出
+    python scripts/build-icons.py --check    # 只校验已有 PNG 的尺寸
 
 原理：本机没有 ImageMagick / sharp / cairosvg，于是用 Edge 的无头模式
       把 SVG 渲染成指定尺寸的透明 PNG（--default-background-color=00000000）。
 
+两套画面：
+  assets/icon.svg        完整版（底板 + 两张卡片 + 口袋）
+                         → 48 / 96 / 128 / 300 / 512
+  assets/icon-small.svg  简化版（去掉卡片，只留底板 + 口袋）
+                         → 16 / 32
+
+  Chrome 的图标规范要求「实际画面 96×96，四边各 16px 透明留白」
+  （占画布 75%）。16px 下画面只有 12px，那两张卡片会糊掉，
+  所以小尺寸走简化版；两套版式共用同一个 0.8 缩放与居中偏移，
+  放在一起看是一个家族。
+
 产物：
   public/icon/{16,32,48,96,128}.png   扩展运行时用（manifest 引用）
-  release/store/icon-512.png          商店提交用的高清图
+  release/store/icon-128.png          商店列表图标（必须恰好 128×128）
+  release/store/icon-300.png          Edge 的 Extension logo（1:1，推荐 300）
+  release/store/icon-512.png          宣传图/大图备用
 """
 
+import argparse
 import os
 import shutil
 import subprocess
 import sys
 import tempfile
 
+from PIL import Image
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SVG = os.path.join(ROOT, 'assets', 'icon.svg')
 ICON_DIR = os.path.join(ROOT, 'public', 'icon')
 STORE_DIR = os.path.join(ROOT, 'release', 'store')
 
-SIZES = [16, 32, 48, 96, 128]
-STORE_SIZE = 512
+SVG_FULL = os.path.join(ROOT, 'assets', 'icon.svg')
+SVG_SMALL = os.path.join(ROOT, 'assets', 'icon-small.svg')
+
+# 用哪套画面出哪个尺寸
+PLAN = [
+    (SVG_SMALL, 16, os.path.join(ICON_DIR, '16.png')),
+    (SVG_SMALL, 32, os.path.join(ICON_DIR, '32.png')),
+    (SVG_FULL, 48, os.path.join(ICON_DIR, '48.png')),
+    (SVG_FULL, 96, os.path.join(ICON_DIR, '96.png')),
+    (SVG_FULL, 128, os.path.join(ICON_DIR, '128.png')),
+    (SVG_FULL, 128, os.path.join(STORE_DIR, 'icon-128.png')),
+    (SVG_FULL, 300, os.path.join(STORE_DIR, 'icon-300.png')),
+    (SVG_FULL, 512, os.path.join(STORE_DIR, 'icon-512.png')),
+]
 
 EDGE_CANDIDATES = [
     r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe',
@@ -68,21 +97,49 @@ def render(browser, svg, size, out_path):
         sys.exit(f'渲染失败：{out_path}')
 
 
+def check(plan):
+    """尺寸必须是渲染时要求的那个，多一像素商店都不收。"""
+    bad = 0
+    for _, size, path in plan:
+        if not os.path.exists(path):
+            print(f'  MISS  {os.path.relpath(path, ROOT)}')
+            bad += 1
+            continue
+        with Image.open(path) as im:
+            ok = im.size == (size, size)
+            if not ok:
+                bad += 1
+            print(f'  {"OK  " if ok else "FAIL"}  {os.path.relpath(path, ROOT):32s} '
+                  f'{im.width}x{im.height} {im.mode}')
+    return bad == 0
+
+
 def main():
-    with open(SVG, encoding='utf-8') as f:
-        svg = f.read()
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--check', action='store_true', help='只校验尺寸，不重新渲染')
+    args = ap.parse_args()
+
+    if args.check:
+        print('校验图标尺寸：')
+        sys.exit(0 if check(PLAN) else 1)
+
+    svgs = {}
+    for path in {p for p, _, _ in PLAN}:
+        with open(path, encoding='utf-8') as f:
+            svgs[path] = f.read()
+
     browser = find_browser()
     os.makedirs(ICON_DIR, exist_ok=True)
     os.makedirs(STORE_DIR, exist_ok=True)
 
-    for s in SIZES:
-        out = os.path.join(ICON_DIR, f'{s}.png')
-        render(browser, svg, s, out)
-        print(f'  icon/{s}.png  ({os.path.getsize(out)} B)')
+    for svg_path, size, out in PLAN:
+        render(browser, svgs[svg_path], size, out)
+        print(f'  {os.path.relpath(out, ROOT):32s} {size}x{size}')
 
-    out = os.path.join(STORE_DIR, f'icon-{STORE_SIZE}.png')
-    render(browser, svg, STORE_SIZE, out)
-    print(f'  store/icon-{STORE_SIZE}.png  ({os.path.getsize(out)} B)')
+    print()
+    print('校验图标尺寸：')
+    if not check(PLAN):
+        sys.exit(1)
     print('完成。')
 
 

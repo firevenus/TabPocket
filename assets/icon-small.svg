@@ -1,0 +1,28 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    TabPocket 小尺寸图标（16px / 32px 专用）
+    和 assets/icon.svg 同一套比例（画面 96×96，四边 16px 留白），
+    但去掉了两张卡片：12px 宽的画面里那两张卡会糊成一团。
+    只留「底板 + 口袋 + 袋口弧」三个形状，袋身也放宽一点，
+    让 16px 下仍能看出是个口袋。
+    底板不用外发光——16px 下模糊边缘只会显脏，改为整体提亮一档，
+    在深色工具栏里靠明度拉开差异。
+  -->
+  <defs>
+    <linearGradient id="plateS" gradientUnits="userSpaceOnUse" x1="8" y1="2" x2="120" y2="126">
+      <stop offset="0" stop-color="#45d8ab"/>
+      <stop offset="0.55" stop-color="#1dab86"/>
+      <stop offset="1" stop-color="#138a70"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(12.8 12.8) scale(0.8)">
+    <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#plateS)"/>
+
+    <!-- 口袋袋身（比大图略宽、略高，小尺寸下更实） -->
+    <path d="M23 47 h82 a9 9 0 0 1 9 9 v30 a13 13 0 0 1 -13 13 h-74 a13 13 0 0 1 -13 -13 v-30 a9 9 0 0 1 9 -9 z" fill="#ffffff"/>
+
+    <!-- 袋口弧 -->
+    <path d="M23 47 H105 Q64 68 23 47 Z" fill="url(#plateS)"/>
+  </g>
+</svg>

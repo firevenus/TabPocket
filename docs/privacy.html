@@ -51,7 +51,7 @@
   <body>
     <main>
       <h1>TabPocket — Privacy Policy</h1>
-      <p class="sub">Last updated: 31 October 2026 · Applies to the TabPocket browser extension</p>
+      <p class="sub">Last updated: 2 November 2026 · Applies to the TabPocket browser extension</p>
       <p class="lang"><a href="#zh">中文版在下方</a></p>
 
       <p>
@@ -87,7 +87,18 @@
           <td><code>chrome.storage.local</code> on your device</td>
           <td>To remember your preferences</td>
         </tr>
+        <tr>
+          <td>Visit history — read only, to count how often a bookmarked page was opened</td>
+          <td>Read in memory when you open the bookmark views; no copy of your history is kept</td>
+          <td>Sort bookmarks by how often you opened them, and rank them in the audit</td>
+        </tr>
       </table>
+      <p>
+        One clarification about browsing history, because the stores ask about it separately:
+        the extension reads your history to count opens, and never writes to, edits or deletes
+        history entries. What it keeps is a number attached to a bookmark you already saved —
+        not a copy of the sites you visited.
+      </p>
       <p>
         The extension never uploads, syncs, or backs up this data to any remote server. There
         is no analytics, no telemetry, no advertising SDK, and no remote code. Removing the
@@ -104,13 +115,16 @@
         </tr>
         <tr>
           <td><code>storage</code> / <code>unlimitedStorage</code></td>
-          <td>Save sessions, bookmarks, settings and statistics locally. Unlimited storage is
-            used so long-term statistics do not hit the default quota.</td>
+          <td>Save sessions, bookmarks, settings and statistics locally. <code>storage.session</code>
+            holds only the timer's volatile start point, which is meant to be discarded when the
+            browser closes. Unlimited storage is used so long-term statistics do not hit the
+            default quota.</td>
         </tr>
         <tr>
           <td><code>alarms</code></td>
-          <td>Run a once-per-minute heartbeat that settles how long the current page has been
-            in the foreground. This is the only periodic task.</td>
+          <td>Run a short heartbeat (one minute by default, configurable down to 30 seconds) that
+            settles how long the current page has been in the foreground. This is the only
+            periodic task.</td>
         </tr>
         <tr>
           <td><code>idle</code></td>
@@ -125,9 +139,9 @@
         </tr>
         <tr>
           <td><code>history</code></td>
-          <td>Count how many times a bookmarked page was visited within a chosen period (30
-            days / 90 days / 1 year) for the audit ranking. History is only read, never
-            modified, and never leaves the device.</td>
+          <td>Count visits to pages you have already bookmarked: the bookmark list is sorted by
+            lifetime visit count, and the audit counts visits within a chosen period (30 / 90 /
+            365 days). History is only read, never modified, and never leaves the device.</td>
         </tr>
         <tr>
           <td><code>contextMenus</code></td>
@@ -139,6 +153,21 @@
       <p>
         None. TabPocket does not sell, transfer, or disclose any user data to third parties.
         No data is used for advertising, profiling, creditworthiness, or lending purposes.
+      </p>
+
+      <h3>Limited Use</h3>
+      <p>
+        The use of information received from Google APIs will adhere to the
+        <a href="https://developer.chrome.com/docs/webstore/program-policies/user-data-faq">Chrome
+        Web Store User Data Policy</a>, including the
+        <a href="https://developer.chrome.com/docs/webstore/program-policies/limited-use">Limited
+        Use requirements</a>.
+      </p>
+      <p>
+        Concretely: browsing history and the idle state are read on the device, used only to rank
+        the user's own bookmarks and to pause the timer when they step away, and are never
+        transferred off the device. There is no server, no analytics and no third-party SDK, so
+        there is no party the data could be shared with.
       </p>
 
       <h2>4. Your control</h2>
@@ -168,7 +197,11 @@
         <li>你在扩展内创建的收藏与标签 → 本地 <code>chrome.storage.local</code></li>
         <li>浏览时长统计（域名、小时、时长、打开次数）→ 本地 IndexedDB</li>
         <li>设置（语言、排除域名、统计开关）→ 本地 <code>chrome.storage.local</code></li>
+        <li>浏览历史（商店表单里的分类叫「<strong>网络记录</strong>」）：<strong>只读</strong>，仅用于统计已收藏页面的打开次数；显示时在内存中计算，不保存你的访问列表</li>
       </ul>
+      <p>
+        关于浏览历史单独说明一句（商店会单独问这一项）：扩展读取历史是为了数打开次数，从不写入、修改或删除历史记录。留下来的是一个挂在「你自己收藏过的页面」上的数字，不是你访问过哪些网站的副本。
+      </p>
       <p>
         无统计分析、无遥测、无广告 SDK、无远程代码。卸载扩展即删除其本地数据。
       </p>
@@ -176,16 +209,28 @@
       <h3>权限用途</h3>
       <ul>
         <li><code>tabs</code>：读取标签页标题与网址，用于收拢/恢复会话与判断当前计时页面。</li>
-        <li><code>storage</code> / <code>unlimitedStorage</code>：本地保存会话、收藏、设置与统计。</li>
-        <li><code>alarms</code>：每分钟结算一次当前页面的停留时长，这是唯一的定时任务。</li>
+        <li><code>storage</code> / <code>unlimitedStorage</code>：本地保存会话、收藏、设置与统计；<code>storage.session</code> 只放计时器的临时起算点，关闭浏览器即丢。</li>
+        <li><code>alarms</code>：以短周期心跳（默认 1 分钟，可调至 30 秒）结算当前页面的停留时长，这是唯一的定时任务。</li>
         <li><code>idle</code>：离开键盘或锁屏时停止计时，避免挂机刷时长。</li>
         <li><code>bookmarks</code>：仅在「整理浏览器收藏」「收藏体检」中使用，读取原生书签并允许删除单条。</li>
-        <li><code>history</code>：仅用于统计收藏页面在指定区间内的访问次数，只读、不改写、不外传。</li>
+        <li><code>history</code>：仅用于统计已收藏页面的访问次数 —— 收藏列表按累计次数排序，体检页按指定区间（30/90/365 天）计数。只读、不改写、不外传。</li>
         <li><code>contextMenus</code>：提供右键「收藏此页面到 TabPocket」。</li>
       </ul>
 
       <h3>数据共享</h3>
       <p>没有。不向任何第三方出售、转让或披露用户数据，也不用于广告、画像、信用评估等用途。</p>
+
+      <h3>Limited Use 声明</h3>
+      <p>
+        从 Google API 获得的信息，其使用将遵守
+        <a href="https://developer.chrome.com/docs/webstore/program-policies/user-data-faq">Chrome
+        Web Store 用户数据政策</a>，包括其中的
+        <a href="https://developer.chrome.com/docs/webstore/program-policies/limited-use">Limited
+        Use 条款</a>。
+      </p>
+      <p>
+        具体到本扩展：浏览历史与空闲状态都在本机读取，只用于给用户自己的收藏排序、以及在人离开时暂停计时，绝不传出设备。没有服务器、没有统计、没有第三方 SDK，也就不存在可以把数据共享出去的对象。
+      </p>
 
       <h3>你可以控制什么</h3>
       <ul>

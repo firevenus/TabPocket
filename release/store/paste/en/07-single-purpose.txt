@@ -1,0 +1,3 @@
+TabPocket does one thing: it gives the user a single local place to keep track of the tabs, the bookmarks and the time they spend in their own browser.
+
+Everything in the extension serves that one purpose. A session is the set of tabs the user chose to keep. A bookmark is a page the user chose to keep. The statistics page counts how long those kept pages stayed in the foreground. The bookmark audit ranks the pages the user already bookmarked by how often they opened them. These are not separate products bundled together: they are four views of the same local record of the user's own browsing, and that record never leaves the browser. There is no second purpose, no account, no server and no analytics.

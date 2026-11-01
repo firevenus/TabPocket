@@ -1,0 +1,25 @@
+[X] 网络记录 (Web history)      — visit counts for the bookmark list and the audit
+[X] 用户活动 (User activity)    — the "idle" permission reports presence/absence
+
+[ ] 个人身份信息 (Personally identifiable information)
+[ ] 健康信息 (Health information)
+[ ] 财务和付款信息 (Financial and payment information)
+[ ] 身份验证信息 (Authentication information)
+[ ] 个人通讯 (Personal communications)
+[ ] 位置 (Location)
+[ ] 网站内容 (Website content)
+
+--------------------------------------------------------------------------------
+  "网络记录" is Chrome's Chinese label for Web history, described as
+  "用户访问过的网页及相关数据（例如网页标题和访问时间）的列表". We read
+  history for visit counts, so this one is mandatory. Do not go looking for a
+  checkbox literally named "Web history" in the Chinese UI — it is not there.
+
+  "用户活动" is the category the idle permission falls into. Its Chinese help
+  text lists "网络监控、点击、鼠标指针位置、滚屏或击键操作记录" — we do none of
+  those, only read an idle/active state — but the category is still the right
+  one, and the declaration is checked against the manifest. Untick it while
+  shipping idle and the submission is false.
+
+  Do NOT tick 网站内容: no host_permissions, no content_scripts, no DOM access.
+--------------------------------------------------------------------------------

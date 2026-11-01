@@ -1,0 +1,5 @@
+MV3 service workers are terminated after roughly 30 seconds of inactivity, so an in-memory timer cannot survive on its own. A short repeating alarm (one minute by default, user-configurable down to 30 seconds) wakes the worker to settle how long the current page stayed in the foreground, then stops.
+
+This is the only periodic task in the extension. It is created once, reused if it already exists, performs no network request, and is cleared when the user pauses tracking or uninstalls.
+
+Without it, foreground time accumulated between worker suspensions would simply be lost, and the statistics page would be inaccurate.

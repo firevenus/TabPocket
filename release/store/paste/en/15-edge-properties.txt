@@ -1,0 +1,4 @@
+Category            Productivity
+Website             https://github.com/firevenus/TabPocket
+Support contact     https://github.com/firevenus/TabPocket/issues
+Mature content      leave unchecked

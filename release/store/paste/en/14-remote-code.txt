@@ -1,0 +1,3 @@
+No. The package ships all of its JavaScript: nothing is fetched or evaluated at runtime.
+
+There is no eval(), no new Function(), no dynamic import of a remote URL, and no remote script or wasm file in the build output. The manifest declares no content_security_policy override, so the MV3 default (script-src 'self') applies unchanged. The extension makes no network requests at all.

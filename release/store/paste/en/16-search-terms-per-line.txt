@@ -1,0 +1,7 @@
+tab manager
+session manager
+bookmark manager
+bookmark audit
+read later
+browsing time tracker
+tab session

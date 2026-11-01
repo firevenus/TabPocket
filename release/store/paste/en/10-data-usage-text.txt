@@ -1,0 +1,3 @@
+Web history: the extension reads the user's own history to count how often each already-saved bookmark was opened, so the bookmark list can be sorted and the audit can rank them. The counting happens in memory inside the browser, and no copy of the visit list is kept. Nothing is uploaded, there is no server, no account and no analytics.
+
+User activity: the idle state is read for one purpose only, to pause the local timer when the user steps away or locks the screen, so unattended time is not counted as browsing time. No keystrokes, clicks, pointer positions or scroll events are recorded. The state is evaluated on the spot and is never stored, logged or transmitted.

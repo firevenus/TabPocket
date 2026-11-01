@@ -1,0 +1,7 @@
+Used only by the bookmark views, whose entire value is how often a saved page was actually opened.
+
+The bookmark list is sorted by lifetime visits: one chrome.history.search call builds an in-memory URL to count map, reused for a short while. The bookmark audit needs counts inside a chosen period (30/90/365 days) and history.search only returns a lifetime total, so the audit calls getVisits per bookmarked URL and filters by visitTime locally.
+
+It is strictly read-only: deleteUrl, deleteRange, deleteAll and addUrl are never called. Counts are matched against the user's own bookmarks, shown only in the interface, never transmitted, never stored on a server, never used for advertising or profiling.
+
+There is no narrower permission, because the open count only exists behind history.

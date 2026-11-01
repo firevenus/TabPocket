@@ -1,0 +1,5 @@
+Used to stop counting when the user has walked away. chrome.idle.onStateChanged reports "idle" and "locked"; the timer pauses while the machine is unattended, so a page left open overnight is not recorded as hours of reading.
+
+Only the state is read. The activity type is never inspected, nothing about the user is stored or transmitted, and a 300-second threshold is used so brief pauses do not produce false gaps.
+
+There is no narrower API: nothing else in the platform reports that the machine is unattended.

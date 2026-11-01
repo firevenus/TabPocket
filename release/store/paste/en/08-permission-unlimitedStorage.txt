@@ -1,0 +1,5 @@
+Long-term statistics accumulate one small record per visited page per day and are never pruned automatically, so the extension's own storage grows without a natural ceiling.
+
+unlimitedStorage exempts the extension's origin from the browser's storage quota, so a quota error cannot silently stop the statistics after months of use. Without it the extension would have to delete the user's older history data to keep writing.
+
+The permission grants no access to the user's files, no access to page content, and no additional network capability. It only removes the quota ceiling on data the extension already owns.

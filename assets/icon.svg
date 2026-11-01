@@ -1,40 +1,55 @@
 <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    TabPocket 扩展图标 · 128×128
+    遵循 Chrome Web Store 图标规范（developer.chrome.com/docs/webstore/images#icons）：
+      · 实际画面 96×96，四边各留 16px 透明 padding（原先画到 120，占 94%，超标）
+      · 不画外描边（UI 自己会加边）
+      · 不加大投影（UI 自己会加阴影）
+      · 深色背景靠底板本身的明度解决，不加外发光（模糊会溢出到 16px 留白里）
+      · 正面朝向，无透视
+    画面元素坐标仍写在老的 0..128 坐标系里，最外层用
+    translate(12.8) scale(0.8) 统一缩到 96×96 并居中，
+    内部比例一个字都不用改（4 → 16，124 → 112）。
+  -->
   <defs>
     <linearGradient id="plate" gradientUnits="userSpaceOnUse" x1="8" y1="2" x2="120" y2="126">
-      <stop offset="0" stop-color="#23ae84"/>
-      <stop offset="0.52" stop-color="#12805f"/>
-      <stop offset="1" stop-color="#075243"/>
+      <stop offset="0" stop-color="#3ad0a2"/>
+      <stop offset="0.52" stop-color="#1aa07e"/>
+      <stop offset="1" stop-color="#108169"/>
     </linearGradient>
-    <radialGradient id="glow" gradientUnits="userSpaceOnUse" cx="34" cy="16" r="98">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.17"/>
-      <stop offset="0.6" stop-color="#ffffff" stop-opacity="0.03"/>
+    <radialGradient id="glowIn" gradientUnits="userSpaceOnUse" cx="34" cy="16" r="98">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.20"/>
+      <stop offset="0.6" stop-color="#ffffff" stop-opacity="0.04"/>
       <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="cardFront" gradientUnits="userSpaceOnUse" x1="0" y1="24" x2="0" y2="78">
-      <stop offset="0" stop-color="#f6fffc"/>
-      <stop offset="0.5" stop-color="#e2f9f0"/>
-      <stop offset="1" stop-color="#c6f1e0"/>
+      <stop offset="0" stop-color="#f7fffc"/>
+      <stop offset="0.5" stop-color="#e4faf1"/>
+      <stop offset="1" stop-color="#cbf2e2"/>
     </linearGradient>
     <linearGradient id="cardBack" gradientUnits="userSpaceOnUse" x1="0" y1="16" x2="0" y2="78">
-      <stop offset="0" stop-color="#8ce2c4"/>
-      <stop offset="1" stop-color="#5ccfa7"/>
+      <stop offset="0" stop-color="#93e5c9"/>
+      <stop offset="1" stop-color="#63d2ac"/>
     </linearGradient>
   </defs>
 
-  <!-- 底板 -->
-  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#plate)"/>
-  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#glow)"/>
+  <!-- ===== 实际画面：96×96 ===== -->
+  <g transform="translate(12.8 12.8) scale(0.8)">
+    <!-- 底板 -->
+    <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#plate)"/>
+    <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#glowIn)"/>
 
-  <!-- 后一张标签页（露出右上角，暗示装了好几张） -->
-  <path d="M55 16 h32 a12 12 0 0 1 12 12 v58 h-56 v-58 a12 12 0 0 1 12 -12 z" fill="url(#cardBack)"/>
+    <!-- 后一张标签页（露出右上角，暗示装了好几张） -->
+    <path d="M55 16 h32 a12 12 0 0 1 12 12 v58 h-56 v-58 a12 12 0 0 1 12 -12 z" fill="url(#cardBack)"/>
 
-  <!-- 前一张标签页 -->
-  <path d="M41 24 h32 a12 12 0 0 1 12 12 v52 h-56 v-52 a12 12 0 0 1 12 -12 z" fill="url(#cardFront)"/>
+    <!-- 前一张标签页 -->
+    <path d="M41 24 h32 a12 12 0 0 1 12 12 v52 h-56 v-52 a12 12 0 0 1 12 -12 z" fill="url(#cardFront)"/>
 
-  <!-- 口袋袋身 -->
-  <path d="M25 54 h78 a8 8 0 0 1 8 8 v26 a12 12 0 0 1 -12 12 h-70 a12 12 0 0 1 -12 -12 v-26 a8 8 0 0 1 8 -8 z" fill="#ffffff"/>
+    <!-- 口袋袋身 -->
+    <path d="M25 54 h78 a8 8 0 0 1 8 8 v26 a12 12 0 0 1 -12 12 h-70 a12 12 0 0 1 -12 -12 v-26 a8 8 0 0 1 8 -8 z" fill="#ffffff"/>
 
-  <!-- 袋口弧：透出底板背景 + 内侧阴影 -->
-  <path d="M25 54 H103 Q64 80 25 54 Z" fill="url(#plate)"/>
-  <path d="M25 54 H103 Q64 80 25 54 Z" fill="#04261c" opacity="0.15"/>
+    <!-- 袋口弧：透出底板背景 + 内侧阴影 -->
+    <path d="M25 54 H103 Q64 80 25 54 Z" fill="url(#plate)"/>
+    <path d="M25 54 H103 Q64 80 25 54 Z" fill="#04261c" opacity="0.15"/>
+  </g>
 </svg>

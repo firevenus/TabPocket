@@ -1,0 +1,5 @@
+Needed to list the title and URL of the tabs the user has chosen to keep. When the user clicks "Collapse all tabs", the extension reads those tabs and writes the list to a local session; "Restore" opens them again with chrome.tabs.create. The same read tells the timer which URL is currently in the foreground.
+
+Scope is the user's own windows only. Titles and URLs are written into the local session record and nothing else: they are never uploaded, never analysed, never matched against any server. The extension does not poll tabs on a schedule.
+
+There is no narrower permission. activeTab covers only one tab after a user gesture and cannot capture or restore a whole window; the tabs permission is what makes window-level session saving possible.

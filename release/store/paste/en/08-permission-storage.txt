@@ -1,0 +1,5 @@
+chrome.storage.local holds the user's sessions, bookmarks, settings and language choice, so the popup and the background service worker read the same state and it survives browser restarts.
+
+storage.session is used for one volatile value only: the timer's current start point, which is meant to be discarded when the browser closes. Nothing is written to storage.sync, and there is no server-side storage of any kind.
+
+No narrower permission covers this. These records must survive a browser restart, which rules out storage.session, and they must be readable before the popup paints, which makes IndexedDB — already used for the much larger visit records — the wrong place for a few small settings.
