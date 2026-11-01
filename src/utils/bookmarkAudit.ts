@@ -185,7 +185,7 @@ async function visitsInRange(
   return { visits, lastVisit };
 }
 
-/** 单条 URL 在近 days 天内的访问次数（收藏列表排序用） */
+/** 单条 URL 在近 days 天内的访问次数（体检页用） */
 export async function countVisits(
   url: string,
   days = 365,
@@ -193,6 +193,83 @@ export async function countVisits(
   const end = Date.now();
   return visitsInRange(url, end - days * 24 * 60 * 60 * 1000, end);
 }
+
+// ---------- 全量访问索引（收藏页排序用） ----------
+
+/**
+ * URL 归一化：去掉 #hash、去掉结尾斜杠、统一小写。
+ * 收藏里存的 URL 与历史里的记录常差一个结尾斜杠，必须归一后才能对上。
+ */
+export function normalizeUrl(url: string): string {
+  let u = (url || '').trim().split('#')[0] ?? '';
+  if (u.endsWith('/')) u = u.slice(0, -1);
+  return u.toLowerCase();
+}
+
+export interface VisitIndex {
+  /** search 是否成功；失败时 counts 为空，调用方要提示而不是当成「全是 0 次」 */
+  ok: boolean;
+  error?: string;
+  /** 归一化 URL → 历史累计访问次数 */
+  counts: Map<string, number>;
+  /** 归一化 URL → 最后访问时间 */
+  lastVisit: Map<string, number>;
+  /** 索引里的 URL 条数 */
+  size: number;
+  builtAt: number;
+}
+
+/**
+ * 一次性把浏览器历史全部读进内存建索引（**一次 IPC**）。
+ *
+ * 为什么不逐条 getVisits：收藏动辄几百条，每条还要试两种 URL 变体，
+ * 就是几百上千次 IPC，在 popup 里根本等不到结果（popup 一失焦就销毁），
+ * 表现就是「点了按访问频次，列表纹丝不动」。
+ *
+ * 口径：`visitCount` 是历史库里的**累计**次数，不按区间切分。
+ * 收藏页要回答的是「我常去哪些站」，累计值比近一年更贴切，文案也如实写「累计」。
+ */
+let indexCache: { idx: VisitIndex; at: number } | null = null;
+const INDEX_TTL = 5 * 60 * 1000;
+
+export async function buildVisitIndex(force = false): Promise<VisitIndex> {
+  if (!force && indexCache && Date.now() - indexCache.at < INDEX_TTL) return indexCache.idx;
+
+  const idx: VisitIndex = {
+    ok: false,
+    counts: new Map(),
+    lastVisit: new Map(),
+    size: 0,
+    builtAt: Date.now(),
+  };
+
+  try {
+    // 先试全量；个别版本对 maxResults 有上限，失败就缩小再试一次
+    let items: HistoryItemLite[] = [];
+    try {
+      items = await historyApi.search({ text: '', startTime: 0, maxResults: 100000 });
+    } catch {
+      items = await historyApi.search({ text: '', startTime: 0, maxResults: 5000 });
+    }
+    for (const it of items ?? []) {
+      if (!it.url) continue;
+      const key = normalizeUrl(it.url);
+      if (!key) continue;
+      idx.counts.set(key, (idx.counts.get(key) ?? 0) + (it.visitCount ?? 1));
+      const t = it.lastVisitTime ?? 0;
+      if (t > (idx.lastVisit.get(key) ?? 0)) idx.lastVisit.set(key, t);
+    }
+    idx.size = idx.counts.size;
+    idx.ok = true;
+  } catch (err) {
+    idx.error = err instanceof Error ? err.message : String(err);
+    lastVisitError = idx.error;
+  }
+
+  indexCache = { idx, at: Date.now() };
+  return idx;
+}
+
 
 export interface HistoryProbe {
   /** 历史记录 API 是否可用 */

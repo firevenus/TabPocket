@@ -356,13 +356,23 @@ button {
   color: #9ca3af;
 }
 
+.bm-sort-hint.warn {
+  color: #b45309;
+}
+
 .bm-sort-row .tag-chip {
   padding: 2px 8px;
   font-size: 11px;
 }
 
 .bm-visits {
+  color: #9ca3af;
+}
+
+/* 有访问记录的用绿色加粗，排序是否生效一眼可见 */
+.bm-visits.hot {
   color: #0f6e56;
+  font-weight: 600;
 }
 
 .bm-tags {

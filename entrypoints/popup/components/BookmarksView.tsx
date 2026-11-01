@@ -3,7 +3,7 @@ import { browser } from 'wxt/browser';
 import { locale, useI18n } from '../../../src/i18n';
 import { displayTag } from '../../../src/i18n/tags';
 import type { BookmarkItem } from '../../../src/types';
-import { countVisits } from '../../../src/utils/bookmarkAudit';
+import { buildVisitIndex, normalizeUrl, type VisitIndex } from '../../../src/utils/bookmarkAudit';
 import {
   addBookmark,
   addToReadLater,
@@ -32,8 +32,8 @@ export default function BookmarksView() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTags, setEditTags] = useState('');
   const [sortMode, setSortMode] = useState<SortMode>('added');
-  /** url -> 近一年访问次数 */
-  const [visits, setVisits] = useState<Record<string, number>>({});
+  /** 历史访问索引（点「按访问频次」时才构建，一次读全量） */
+  const [visitIndex, setVisitIndex] = useState<VisitIndex | null>(null);
   const [counting, setCounting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -61,42 +61,36 @@ export default function BookmarksView() {
     [items, query, activeTag],
   );
 
-  // 「访问最多」模式下按需统计（近一年），结果缓存在内存，重复切换不再重算
+  // 「访问最多」模式下建一次历史索引（一次 search 读全量，毫秒级），结果复用
   useEffect(() => {
-    if (sortMode !== 'visits') return;
-    const todo = filtered.filter((b) => visits[b.url] === undefined).slice(0, 400);
-    if (todo.length === 0) return;
+    if (sortMode !== 'visits' || visitIndex) return;
     let alive = true;
     setCounting(true);
-    void (async () => {
-      const got: Record<string, number> = {};
-      for (let i = 0; i < todo.length; i += 10) {
-        const batch = todo.slice(i, i + 10);
-        const res = await Promise.all(
-          batch.map((b) => countVisits(b.url, 365).catch(() => ({ visits: 0, lastVisit: 0 }))),
-        );
-        batch.forEach((b, k) => {
-          got[b.url] = res[k]?.visits ?? 0;
-        });
-      }
+    void buildVisitIndex().then((idx) => {
       if (!alive) return;
-      setVisits((prev) => ({ ...prev, ...got }));
+      setVisitIndex(idx);
       setCounting(false);
-    })();
+    });
     return () => {
       alive = false;
     };
-  }, [sortMode, filtered, visits]);
+  }, [sortMode, visitIndex]);
+
+  /** 取某条收藏的累计访问次数（未匹配到历史 = 0） */
+  const visitsOf = useCallback(
+    (url: string) => visitIndex?.counts.get(normalizeUrl(url)) ?? 0,
+    [visitIndex],
+  );
 
   const shown = useMemo(() => {
     const list = [...filtered];
     if (sortMode === 'added') return list.sort((a, b) => b.createdAt - a.createdAt);
     return list.sort((a, b) => {
-      const av = visits[a.url] ?? -1;
-      const bv = visits[b.url] ?? -1;
+      const av = visitIndex?.counts.get(normalizeUrl(a.url)) ?? 0;
+      const bv = visitIndex?.counts.get(normalizeUrl(b.url)) ?? 0;
       return bv - av || b.createdAt - a.createdAt;
     });
-  }, [filtered, sortMode, visits]);
+  }, [filtered, sortMode, visitIndex]);
 
   // 收藏当前活动标签页
   const bookmarkCurrentTab = async () => {
@@ -294,8 +288,12 @@ export default function BookmarksView() {
           {t('bm.sortVisits')}
         </button>
         {sortMode === 'visits' && (
-          <span className="bm-sort-hint">
-            {counting ? t('bm.counting') : t('bm.lastYear')}
+          <span className={`bm-sort-hint${visitIndex && !visitIndex.ok ? ' warn' : ''}`}>
+            {counting
+              ? t('bm.counting')
+              : visitIndex && !visitIndex.ok
+                ? t('bm.indexFailed')
+                : t('bm.allTime')}
           </span>
         )}
       </div>
@@ -342,10 +340,10 @@ export default function BookmarksView() {
                 <div className="bm-domain">
                   {domainOf(b.url)} ·{' '}
                   {new Date(b.createdAt).toLocaleDateString(locale())}
-                  {sortMode === 'visits' && visits[b.url] !== undefined && (
-                    <span className="bm-visits">
+                  {sortMode === 'visits' && visitIndex?.ok && (
+                    <span className={`bm-visits${visitsOf(b.url) > 0 ? ' hot' : ''}`}>
                       {' · '}
-                      {t('bm.visitsInYear', { n: visits[b.url] ?? 0 })}
+                      {t('bm.visitsAllTime', { n: visitsOf(b.url) })}
                     </span>
                   )}
                 </div>

@@ -113,6 +113,7 @@ globalThis.chrome = {
       return visitsMock[details.url] ?? [];
     },
     search: async ({ startTime, endTime, maxResults } = {}) => {
+      globalThis.__searchCalls = (globalThis.__searchCalls ?? 0) + 1;
       const items = Object.entries(visitsMock)
         .map(([url, list]) => {
           const times = list.map((v) => v.visitTime);
@@ -211,6 +212,31 @@ const one = await mod.countVisits('https://www.bilibili.com/video/BV1xx', 365);
 check('countVisits 近一年', one.visits, 5);
 const oneShort = await mod.countVisits('https://github.com/firevenus/TabPocket', 30);
 check('countVisits 区间切换', oneShort.visits, 2);
+
+// 全量访问索引（收藏页「按访问频次」排序用）：一次 search 建索引，不逐条 getVisits
+globalThis.__searchCalls = 0;
+const idx = await mod.buildVisitIndex(true);
+check('索引构建成功', idx.ok, true);
+check('索引只发一次 search', globalThis.__searchCalls, 1);
+check('索引 URL 条数（0 次访问的不入索引）', idx.size, 4);
+check(
+  '索引：结尾斜杠差异能匹配',
+  idx.counts.get(mod.normalizeUrl('https://news.ycombinator.com')),
+  2,
+);
+check(
+  '索引：hash 锚点能匹配',
+  idx.counts.get(mod.normalizeUrl('https://developer.mozilla.org/en-US/docs/Web#intro')),
+  1,
+);
+check(
+  '索引：从未访问的收藏=0（不返回 undefined）',
+  idx.counts.get(mod.normalizeUrl('https://example.com/never')) ?? 0,
+  0,
+);
+// TTL 内复用，不再发请求
+await mod.buildVisitIndex();
+check('索引 TTL 内复用', globalThis.__searchCalls, 1);
 
 // CSV
 const csv = mod.toCsv(r.rows.slice(0, 2), 365);
