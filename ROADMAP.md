@@ -194,7 +194,10 @@ Chrome Web Store 的排序权重压在评分、近期安装、互动上。0 评�
 **P0 · 0 → 50（本周）**
 
 - 商店页首屏定生死：标题带关键词、前两张截图说清价值、summary 130 字符（已顶满，别再改长）
-- 加「用过核心功能 5 次后提示评价」的页内轻提示（不是弹窗）
+- 加「用过核心功能 5 次后提示评价」的页内轻提示（不是弹窗）。跳转目标：
+  `https://chromewebstore.google.com/detail/dfmjmpanhpclpcciffpchghefehdcdkb/reviews`
+  注意：Edge 用户点这个链接会打不开，需按 `navigator.userAgent` 分流到 Edge 商店页
+  （Edge 侧暂无独立的评价深链，只能落到详情页）。计数存在 `storage.local`，别用 `storage.sync`
 - 找 10 个人真实使用并留评价
 
 **P1 · 50 → 500（2–4 周）**

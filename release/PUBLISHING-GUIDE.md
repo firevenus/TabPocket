@@ -708,24 +708,53 @@ curl -X POST "https://api.addons.microsoftedge.microsoft.com/v1/products/$PRODUC
 
 ### 6.2 后台分配的标识（务必留档）
 
-Edge 首次提交通过后，后台 **Extension overview** 页会分配四个标识。它们出现在这一页之后就不会再重复展示给别处，**尤其是 Product ID —— Publish API 全靠它，丢了只能回后台翻**：
+同一份代码在两个商店里有**三个互不相同的 ID**。混淆它们的直接后果是「以为装的是新版，其实装的是另一个」——所以全部留档。
+
+#### Edge Add-ons（`partner.microsoft.com/dashboard/microsoftedge`）
 
 | 标识 | 值 | 用途 |
 |---|---|---|
-| **Product ID** | `7ddf02e0-65b7-44eb-9ae3-83ee50d1cfae` | §6.1 自动发版命令里的 `$PRODUCT_ID`，唯一无法用别的方式推出的一项 |
-| **CRX ID** | `cpphloldpknfjhiicggmciffeebindag` | 商店签名后的真实扩展 ID，见下方说明 |
-| **Store ID** | `0RDCKCDLP386` | 商店详情页短链用（发布后 URL 才会生效） |
-| **Public key** | 已存档 `release/store/edge-public-key.pem` | 可离线复算 CRX ID，见下 |
+| **Product ID** | `7ddf02e0-65b7-44eb-9ae3-83ee50d1cfae` | §6.1 自动发版命令的 `$PRODUCT_ID`，**唯一无法用别的方式推出**的一项 |
+| **CRX ID** | `cpphloldpknfjhiicggmciffeebindag` | 商店签名后的扩展 ID，即 `edge://extensions` 里显示的那一串 |
+| **Store ID** | `0RDCKCDLP386` | 商店详情页短链（发布后才生效） |
+| **Public key** | `release/store/edge-public-key.pem` | 可离线复算 CRX ID，见下 |
 
-**CRX ID 与本地开发版不是同一个**，这一点会直接影响用户：
+#### Chrome Web Store（`chrome.google.com/webstore/devconsole`）
 
-- 开发时「加载已解压的扩展」得到的是本机路径派生的 ID，和商店版无关
-- 商店安装后是 `cpphloldpknfjhiicggmciffeebindag`，**扩展的存储空间（`chrome.storage` 与 IndexedDB）完全独立**
-- 也就是说，装了商店版之后，之前开发版里的会话、收藏、统计**一条都看不到**
+| 标识 | 值 | 用途 |
+|---|---|---|
+| **Extension ID** | `dfmjmpanhpclpcciffpchghefehdcdkb` | **永久不变**。商店链接、评价页链接、外部统计全用它 |
 
-所以给用户的建议是：商店版可以装来验货，日常继续用开发版；或者在卸载开发版之前先导出收藏备份（**备份功能只覆盖收藏，不含会话** —— 这是目前已知的功能缺口，见 `ROADMAP.md`）。
+发布后的两个链接（先记下来，`.item` 之后可直接用）：
 
-Chrome 那边同理，Chrome 上架后会分配另一个完全不同的 ID，与 Edge 的 CRX ID 也不通用。
+```
+详情页   https://chromewebstore.google.com/detail/dfmjmpanhpclpcciffpchghefehdcdkb
+评价页   https://chromewebstore.google.com/detail/dfmjmpanhpclpcciffpchghefehdcdkb/reviews
+```
+
+评价页链接在 `ROADMAP.md` §6 的 G1 计划里会用到：「用过核心功能 5 次后轻提示评价」，跳转目标就是这条。
+
+#### 三个 ID 的关系
+
+| 场景 | 扩展 ID | 存储空间 |
+|---|---|---|
+| 本地开发（加载已解压） | 由**目录路径**派生，换个目录就变 | 独立 |
+| Edge 商店版 | `cpphloldpknfjhiicggmciffeebindag` | 独立 |
+| Chrome 商店版 | `dfmjmpanhpclpcciffpchghefehdcdkb` | 独立 |
+
+三者的 `chrome.storage` 与 IndexedDB **完全隔离**，装了哪个就只看到哪个里面的数据。
+
+⚠️ 这意味着**你自己装商店版会看到一个空白的 TabPocket**，开发版里的会话、收藏、统计一条都看不到。别误判成「数据丢了」。
+
+给用户的建议：商店版可以装来验货，日常继续用开发版；或者卸载开发版之前先导出收藏备份（**备份功能只覆盖收藏，不含会话** —— 已知缺口，见 `ROADMAP.md`）。
+
+#### 私钥保管（Chrome 侧唯一的高风险项）
+
+Chrome 在上架时为你这一对密钥生成私钥，**同一账号下的所有扩展共用同一对**。它不在后台任何列表里展示，只能在条目详情里的 `Download private key` 取到，UI 位置随版本变动。
+
+丢了会怎样：**那个扩展永远无法再更新**。只能重新上传成新条目，换一个新 ID，安装量、评价、用户数据全部从零开始。
+
+所以：下载后立刻放到仓库之外的安全位置（密码管理器附件、加密压缩包），并在 `~/.workbuddy/refs/` 里记一句它存在哪。**不要放进本仓库** —— 这是公开的 MIT 项目。
 
 #### 用公钥复算 CRX ID
 
@@ -754,7 +783,7 @@ CRX ID    : cpphloldpknfjhiicggmciffeebindag
 
 ---
 
-## 7. 现在还差什么（按顺序）
+## 7. 上架状态
 
 | # | 事项 | 状态 |
 |---|---|---|
@@ -762,21 +791,43 @@ CRX ID    : cpphloldpknfjhiicggmciffeebindag
 | 2 | 打包与校验 | ✅ `release/TabPocket-v0.6.1.zip`，六项校验通过 |
 | 3 | 中英文上架文案与逐字段粘贴文件 | ✅ `release/store/paste/{en,zh_CN}/` |
 | 4 | 图标、截图、宣传图块 | ✅ 均已按两家规范化生成并校验 |
-| 5 | **Edge 提交** | ✅ **2026-11-02 已提交，状态 `In review`**，等 7 个工作日 |
-| 6 | **Chrome 提交** | ⚠️ **未提交**，隐私权规范页九个框待填（§1.5） |
+| 5 | **Edge 提交** | ✅ 2026-11-02 提交，`In review`，官方给 7 个工作日 |
+| 6 | **Chrome 提交** | ✅ 2026-11-02 提交，`待审核`（Pending review） |
 
-剩余只有 Chrome 一家。它的后台与 Edge 高度重合，`paste/en/` 下的文件可直接复用，主要工作在 §1.5 那 9 个框和底部的数据使用申报。
+两家都已送审，**剩下的只有等**。审核独立进行，互不影响，谁先通过谁先上。
 
-### 7.1 Edge 送审后的状态与注意事项
+### 7.1 审核期的状态含义与限制
 
-提交成功后 **Extension overview** 页会显示 `In review`，同时给出四个标识（见 §6.2）。此时有两条限制：
+**两家的状态词汇不一样**，别看错：
 
-- **审核期间不能改任何字段。** 想改必须先点 `Cancel submission`，这会丢掉当前队列位置、重新排队。所以除非有硬错误（比如截图传错语言），不要动。
-- **`Languages` 显示 `English, Chinese (China)`** —— 这说明包内 `_locales` 的自动识别生效了，两个语言页都在。若只显示一行，按 §2.6 末尾的三条排查。
+| 商店 | 提交后的状态 | 通过后 | 被拒 |
+|---|---|---|---|
+| Edge | `In review` | `In the Store` | `Failed`（邮件指明条款） |
+| Chrome | `待审核` / `Pending review`（后台显示「该草稿尚待审核」） | 自动变「已发布」 | 邮件 + 后台红色状态 |
 
-审核结果有三种：`In the Store`（通过）、`Failed`（被拒，邮件里会给具体条款）、`Cancelled`（你主动撤回）。被拒时**不要急着补材料**——先看它引的是哪一条，§8 的表里能对上大部分可能性。
+**审核期间都不能改任何字段。**
 
-通过之后用户端不会立刻更新，Edge 和 Chrome 都是每隔一段时间才拉一次检查。
+- Edge 想改必须先点 `Cancel submission`，会丢掉队列位置重新排队
+- Chrome 想改要「取消审核 / 删除草稿」，同样重排
+
+所以除了硬错误（例如发现截图传成了另一语言那套），**不要动**。
+
+判断 Edge 语言页是否正常，看 `Languages` 是否显示 `English, Chinese (China)` —— 显示了就说明包内 `_locales` 自动识别成功（本项目已验证）。若只有一行，按 §2.6 末尾三条排查。
+
+### 7.2 通过之后
+
+Chrome 首次通过时会问是「立即发布」还是「暂存，手动发布」。如果选了后者，**必须回后台点一次发布**，否则会一直挂在「已发布」的草稿状态、商店里搜不到。
+
+用户端不会立刻拿到更新：两家都是每隔几小时才拉一次检查。想马上验证，去 `edge://extensions` 或 `chrome://extensions` 点「更新」。
+
+**验证时注意**：商店版是全新的扩展 ID（见 §6.2 三个 ID 的对照表），装上会是空白列表，这不是 bug。
+
+### 7.3 被拒时的处置顺序
+
+1. 先看邮件或后台引的是哪一条政策，**别急着补材料**
+2. 到 §8 那张 47 条对照表里找对应行，看它要的是「改代码」「改文案」还是「改申报」
+3. 只有「捆绑无关功能」这条有结构性问题——TabPocket 的会话/收藏/统计/体检四块，被质疑时应优先考虑把「浏览统计」拆成独立扩展，而不是继续补论证材料
+4. 改完必须**升版本号**重传，Chrome 不允许复用被拒的版本号
 
 ---
 
