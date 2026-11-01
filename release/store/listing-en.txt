@@ -1,0 +1,283 @@
+################################################################################
+#                                                                              #
+#   TabPocket  ·  STORE LISTING TEXT  —  ENGLISH                               #
+#   Version: v0.6.1            Generated: 2026-11-02                           #
+#                                                                              #
+################################################################################
+#
+#  HOW TO USE
+#    Every numbered block [NN] = one field in the dashboard.
+#    Copy ONLY the plain text that sits directly under the block header line,
+#    and stop at the next "====" line.
+#    Block headers and their notes are instructions — never paste them.
+#
+#  PASTE ORDER — CHROME  (dev console: chrome.google.com/webstore/devconsole)
+#    1. Add new item .......... upload release/TabPocket-v0.6.1.zip
+#    2. Store listing tab ..... [01] Name -> [02] Summary -> [03] Description
+#                               -> [04] Category -> [05] Language -> [12] Assets
+#    3. Privacy practices tab . [06] URL -> [07] Single purpose -> [08] Permissions
+#                               -> [09][10] Data usage -> [11] Certifications
+#                               -> [14] Remote code
+#    4. Distribution tab ...... [13] Visibility / Regions / Pricing / Trader
+#    5. Test instructions tab . [17] (only if the reviewer asks)
+#    6. Submit for review
+#
+#  PASTE ORDER — EDGE  (partner.microsoft.com/dashboard/microsoftedge)
+#    1. Create new extension .. upload the SAME zip
+#    2. Availability tab ...... [13] Visibility / Markets
+#    3. Properties tab ........ [15] Category / Website / Support / Mature
+#    4. Privacy tab ........... [06] URL -> [07] -> [08] -> [09][10]
+#                               -> [14] Remote code
+#    5. Store listings tab .... pick language -> per-language page:
+#                               [01][02] are READ-ONLY here (from manifest)
+#                               [03] Description -> [12] Logo / tiles / shots
+#                               -> [16] SEARCH TERMS
+#    6. Submit -> Notes for certification: [18]
+#    7. Publish
+#
+#  NOTE  Edge reads the extension name and short description from the package
+#        manifest (__MSG_extName__ / __MSG_extDesc__), so those two fields have
+#        NO input box on Edge — they are shown filled in and locked.
+#
+################################################################################
+
+
+================================================================================
+[01]  NAME
+      Chrome: editable  ·  Edge: read-only, from manifest
+      limit 45 chars  ·  used 34
+================================================================================
+TabPocket — Tab & Bookmark Manager
+
+
+================================================================================
+[02]  SUMMARY / SHORT DESCRIPTION
+      Chrome: editable  ·  Edge: read-only, from manifest
+      limit 132 chars  ·  used 130
+================================================================================
+Collapse tabs into sessions, clean up and audit bookmarks, save pages for later, and track browsing stats. 100% local, no account.
+
+
+================================================================================
+[03]  DETAILED DESCRIPTION
+      Chrome: limit 16,000 chars  ·  Edge: limit 250–10,000 chars
+      this text: ~1,820 chars (fits both)
+================================================================================
+TabPocket is a local-first browser extension that keeps your tabs, bookmarks and browsing stats in one small pocket.
+
+■ Collapse tabs into sessions
+Close 30 open tabs in one click and get a tidy session card back. Expand the card to see every tab, open any single one, restore the whole session when you need it again. Sessions survive browser restarts.
+
+■ Bookmarks, organised
+Bookmark the current page or right-click any page. Tag bookmarks, search across title / URL / tag, and keep a "Read Later" list for the pages you don't have time for right now.
+
+■ Organize what your browser already has
+Read your existing browser bookmarks, import them, auto-tag them by site category (dev, finance, video, social, shopping, news, tools, office, gaming, learning, music, writing, travel) and mark the sites you visit most as "Frequent".
+
+■ Bookmark audit
+See which of your bookmarks you actually use. TabPocket ranks every bookmarked page by how many times you opened it in the last 30 days, 90 days or a year — by page or by site — and shows how many you haven't touched at all. Export the result to CSV and clean up the dead weight.
+
+■ Browsing stats
+A quiet timer records how long you spend on each site and turns it into a calendar heatmap, a top-12 site ranking and a 24-hour distribution. Every minute is settled by a heartbeat, tab switches settle instantly, and the timer stops when you are idle or locked.
+
+■ Private by design
+No account. No server. No analytics, no ads, no remote code. Sessions, bookmarks and statistics never leave your device — they live in your browser profile and disappear when you uninstall. Exclude any domain from tracking, and clear statistics whenever you want.
+
+Manifest V3. Open source (MIT) at github.com/firevenus/TabPocket. Suggestions and bug reports are welcome in GitHub Issues.
+
+
+================================================================================
+[04]  CATEGORY
+      Chrome: Store listing -> Category  ·  Edge: same value in Properties
+================================================================================
+Productivity
+
+
+================================================================================
+[05]  LANGUAGE  (Chrome only — the primary listing language)
+================================================================================
+English
+
+
+================================================================================
+[06]  PRIVACY POLICY URL
+      Chrome: Privacy practices  ·  Edge: Privacy tab
+================================================================================
+https://firevenus.github.io/TabPocket/privacy.html
+
+
+================================================================================
+[07]  SINGLE PURPOSE
+================================================================================
+TabPocket manages your browser tabs and bookmarks, and shows you statistics about your own browsing, all stored locally on your device.
+
+
+================================================================================
+[08]  PERMISSION JUSTIFICATIONS   — one field per permission, 8 fields total
+      Paste each block into the input box labelled with that permission name.
+================================================================================
+--- tabs ---
+Reads the title and URL of open tabs so the user can collapse the current window into a saved session and restore it later, and so the timer knows which page is currently active.
+
+--- storage ---
+Saves sessions, bookmarks, settings and the language preference locally with chrome.storage.local.
+
+--- unlimitedStorage ---
+Long-term browsing statistics are stored in IndexedDB; unlimited quota prevents the default storage limit from being hit after months of use.
+
+--- alarms ---
+A once-per-minute alarm settles how long the current page stayed in the foreground. This is the only periodic task in the extension.
+
+--- idle ---
+Stops the timer when the user is away from the keyboard or the screen is locked, so idle time is not counted as browsing time.
+
+--- bookmarks ---
+Used only by the "Organize bookmarks" and "Bookmark audit" features: reads the user's existing browser bookmarks to import/categorise them and to rank them by visit count, and lets the user delete a bookmark from the audit list.
+
+--- history ---
+Used only by the "Bookmark audit" feature: counts how many times a bookmarked page was opened within the selected period (30/90/365 days). History is read-only and never modified.
+
+--- contextMenus ---
+Adds the right-click menu item "Add this page to TabPocket".
+
+
+================================================================================
+[09]  DATA USAGE — CHECKBOXES
+      Both stores split this into categories. Tick exactly these two, and
+      nothing else:
+================================================================================
+[X] Web history        — the Bookmark audit ranking reads visit counts
+[X] User activity      — the "idle" permission reports presence/absence
+
+[ ] Personally identifiable information
+[ ] Health information
+[ ] Financial and payment information
+[ ] Authentication information
+[ ] Personal communications
+[ ] Location
+[ ] Website content
+
+--------------------------------------------------------------------------------
+  WHY "User activity" IS MANDATORY: the idle permission belongs to this
+  category. Leaving it unticked while shipping idle is a FALSE declaration and
+  a common reason for rejection or later removal. Do not skip it.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+[10]  DATA USAGE — EXPLANATION TEXT
+      Purpose / justification text box under the checkboxes.
+      Paste both paragraphs.
+================================================================================
+Web history is read locally only, for the Bookmark audit ranking. It is processed inside the user's browser, never transmitted to any server, never sold, and never shared with third parties. TabPocket has no backend.
+
+The idle state is used exclusively to pause the local timer when the user steps away or locks the screen, so idle time is not counted as browsing time. The idle state is never stored, logged, or transmitted.
+
+
+================================================================================
+[11]  CERTIFICATIONS  (Chrome privacy tab — tick all three)
+================================================================================
+[X] I do not sell or transfer user data to third parties, outside of the
+    approved use cases.
+[X] I do not use or transfer user data for purposes that are unrelated to my
+    item's single purpose.
+[X] I do not use or transfer user data to determine creditworthiness or for
+    lending purposes.
+
+
+================================================================================
+[12]  GRAPHIC ASSETS  (file checklist, no text to paste)
+================================================================================
+Store icon        128×128 PNG        public/icon/128.png
+                                   or release/store/icon-512.png downsized
+Screenshots       1280×800 (or 640×400), 1–5 images, NO alpha channel
+                                   release/screenshots/1-stats-en.png
+                                   release/screenshots/2-audit-en.png
+                                   release/screenshots/3-popup-bookmarks-en.png
+                                   release/screenshots/4-popup-sessions-en.png
+Small promo tile  440×280  (optional, needed for category placement)
+Large promo tile  1400×560 (optional, needed for homepage feature slots)
+YouTube video     optional
+
+EDGE extra assets (same files, different sizes allowed):
+Extension logo    300×300 recommended, 1:1, min 128×128
+
+
+================================================================================
+[13]  DISTRIBUTION / AVAILABILITY
+================================================================================
+CHROME  Distribution tab
+  Visibility            Public
+  Regions               All regions
+  Pricing               Free
+  Trader status         Non-trader  (individual, non-commercial)
+
+EDGE    Availability tab
+  Visibility            Public
+  Markets               All markets (default; includes future markets)
+
+
+================================================================================
+[14]  REMOTE CODE
+================================================================================
+No, I am not using remote code.
+
+
+================================================================================
+[15]  EDGE PROPERTIES TAB
+================================================================================
+Category            Productivity
+Website             https://github.com/firevenus/TabPocket
+Support contact     https://github.com/firevenus/TabPocket/issues
+Mature content      leave unchecked
+
+
+================================================================================
+[16]  SEARCH TERMS  (Edge only — Chrome has no such field)
+      Limits: max 7 terms · max 21 words in total · max 30 chars per term
+      This set: 7 terms · 15 words · longest 21 chars
+      The field is NOT shown to users; it only feeds store search.
+      Edge gives every language its own search terms box — do not just
+      machine-translate the English list. The Chinese file has its own set.
+================================================================================
+  If the box takes one term per line, paste this column:
+
+tab manager
+session manager
+bookmark manager
+bookmark audit
+read later
+browsing time tracker
+tab session
+
+  If the box is a single line, paste this instead:
+
+tab manager, session manager, bookmark manager, bookmark audit, read later, browsing time tracker, tab session
+--------------------------------------------------------------------------------
+
+
+================================================================================
+[17]  CHROME TEST INSTRUCTIONS  (optional tab — only if review asks)
+================================================================================
+No account or credentials are needed. Everything runs locally on the user's device.
+
+How to test:
+1. Install. Click the toolbar icon to open the popup (4 tabs: Sessions / Bookmarks / Statistics / About).
+2. Open a few pages, then on Sessions click "Collapse all tabs" and then "Restore".
+3. On Bookmarks, click "Bookmark this page". Then click "Organize bookmarks" — this reads existing browser bookmarks (permission: bookmarks).
+4. Click "Bookmark audit" to open the full-page report. It ranks bookmarks by visit count over 30/90/365 days, using the read-only history permission.
+5. On Statistics, click "Open full report" for the charts and the background-status panel.
+
+The extension makes no network requests. It contains no remote code.
+
+
+================================================================================
+[18]  EDGE NOTES FOR CERTIFICATION
+================================================================================
+Same text as [17] — copy the whole block above into the
+"Notes for certification" box on the final submit page.
+
+
+################################################################################
+#  END OF FILE  ·  TabPocket v0.6.1  ·  English listing text
+################################################################################

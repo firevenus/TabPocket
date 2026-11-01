@@ -9,16 +9,19 @@
 
 | 项目 | 状态 | 说明 |
 |---|---|---|
-| 打包好的 zip | ✅ 已有 | `release/TabPocket-v0.6.1-edge.zip`，`manifest.json` 在压缩包根部（不是套一层文件夹） |
+| 打包好的 zip | ✅ 已校验 | `release/TabPocket-v0.6.1.zip`（296 KB / 24 个文件，`manifest.json` 在根部，无源码无 map） |
+| **可直接粘贴的文案** | ✅ 已有 | `release/store/listing-en.txt`、`release/store/listing-zh_CN.txt` —— 按后台字段顺序编号，逐块复制 |
 | 128×128 图标 | ✅ 已有 | `public/icon/128.png`，商店里要单独再传一次 |
 | 截图 ≥1 张（1280×800 或 640×400） | ⚠️ 要自己截 | 见 §5，PNG 或 24 位 JPG，**不能带透明通道** |
-| 商店短描述 ≤132 字符 | ✅ 本文给 | 见 §1.4 |
-| 详细描述 | ✅ 本文给 | 英文版 + 中文版 |
-| 单一用途说明（Single purpose） | ✅ 本文给 | §1.5 |
-| 每个权限的理由 | ✅ 本文给 | §1.5 |
+| 商店短描述 ≤132 字符 | ✅ 已有 | `listing-en.txt` `[02]` / `listing-zh_CN.txt` `[02]` |
+| 详细描述 | ✅ 已有 | 同上文件 `[03]`，中英各一份 |
+| 单一用途说明（Single purpose） | ✅ 已有 | `listing-en.txt` `[07]`，本文 §1.5 有同样内容 |
+| 每个权限的理由 | ✅ 已有 | `listing-en.txt` `[08]`（8 条），本文 §1.5 有表格版 |
 | 隐私政策 URL | ✅ 已上线 | https://firevenus.github.io/TabPocket/privacy.html （见 §4） |
 | Google 账号 + 两步验证 + $5 | ⚠️ 要准备 | 一次性，账号级，不是每个扩展收 |
 | Microsoft 账号（Outlook/Hotmail） | ⚠️ 要准备 | Edge 免费 |
+
+> 两份 txt 是**粘贴源**（按后台字段顺序编号，标了每处的字符数与限制），本指南是**理解用**（讲清为什么这么填、哪里容易被打回）。两边内容应当一致 —— 改文案时先改 txt，再同步本文。
 
 ⚠️ **重要提醒**：上架后扩展 ID 会变（商店签名 ≠ 本地加载的 ID），**本地试用版里的会话/收藏/统计带不过去**。上架前先让试用用户导出备份。你自己的数据也一样。
 
@@ -29,6 +32,32 @@
 **开发者后台**：https://chrome.google.com/webstore/devconsole
 **政策文档**：https://developer.chrome.com/docs/webstore/program-policies
 **费用**：一次性 5 美元（账号级，之后发多少个扩展都不再收）
+
+### 1.0 后台逐字段填写顺序（照这个顺序走一趟，不用来回翻）
+
+后台左侧是四个页签 + 提交页。**括号里的 `[NN]` 是 `release/store/listing-en.txt` 里的块号**，去那里整块复制。
+
+| # | 页签 → 字段 | 填什么 | 取自 |
+|---|---|---|---|
+| 1 | **Package**（上传后只读） | 核对版本号是否为 `0.6.1` | — |
+| 2 | **Store listing → Name** | `TabPocket — Tab & Bookmark Manager` | `[01]` |
+| 3 | **Store listing → Summary** | 130 字符那句（上限 132） | `[02]` |
+| 4 | **Store listing → Description** | 长文，1,818 字符（上限 16,000） | `[03]` |
+| 5 | **Store listing → Category** | `Productivity` | `[04]` |
+| 6 | **Store listing → Language** | `English`（主语言，另有中文页另填） | `[05]` |
+| 7 | **Store listing → 图片** | 图标 128×128、截图 1–5 张、宣传图可选 | `[12]` |
+| 8 | **Privacy practices → Single purpose** | 一句话 | `[07]` |
+| 9 | **Privacy practices → Permission justification** | **8 个权限各一个输入框**，逐个粘贴 | `[08]` |
+| 10 | **Privacy practices → Remote code** | `No, I am not using remote code` | `[14]` |
+| 11 | **Privacy practices → Data usage 分类** | 勾 **Web history** + **User activity**，其余全不勾 | `[09]` |
+| 12 | **Privacy practices → Data usage 说明** | 两段英文 | `[10]` |
+| 13 | **Privacy practices → 三项认证** | 全部勾选 | `[11]` |
+| 14 | **Privacy practices → Privacy policy URL** | `https://firevenus.github.io/TabPocket/privacy.html` | `[06]` |
+| 15 | **Distribution** | Visibility `Public` · Regions `All` · Pricing `Free` · Trader `Non-trader` | `[13]` |
+| 16 | **Test instructions**（可选） | 审核员操作指引 | `[17]` |
+| 17 | **Submit for review** | 确认弹窗里可勾「审核通过后先暂存，手动发布」 | — |
+
+> ⚠️ 两个最容易卡住的地方：**第 9 步是 8 个独立输入框**（少填一个就会被打回），**第 11 步的分类勾选**比说明文字更重要 —— 说明写"本地处理"不能替代勾选。
 
 ### 1.1 注册开发者账号
 
@@ -44,7 +73,7 @@
 ### 1.2 上传包
 
 1. 后台右上角 **New item**（新项目）
-2. 拖入 `TabPocket-v0.6.1-edge.zip`
+2. 拖入 `release/TabPocket-v0.6.1.zip`（两个店用**同一个包**，不需要分别打包）
 3. 上传后会出现 Store listing / Privacy / Distribution 三个页签
 
 ### 1.3 名称
@@ -53,10 +82,14 @@
 
 ### 1.4 描述
 
-**Summary（≤132 字符，粘贴这段，106 字符）**
+> 可粘贴版在 `release/store/listing-en.txt`（`[02]` 摘要、`[03]` 详细描述）和 `listing-zh_CN.txt`。**本节文本与 txt 保持一致**；改文案时两边都要改，别只改一处。
+
+**Summary（≤132 字符，本句 130 字符）**
+
+⚠️ 这句与 `_locales/en/messages.json` 的 `extDesc` **必须相同** —— Edge 的短描述直接读 manifest，两处不一致会出现「Chrome 商店说的和 Edge 装完看到的不一样」。
 
 ```
-Collapse tabs into sessions, clean up bookmarks, save pages for later, and see browsing stats. 100% local.
+Collapse tabs into sessions, clean up and audit bookmarks, save pages for later, and track browsing stats. 100% local, no account.
 ```
 
 **Detailed description（英文）**
@@ -175,6 +208,39 @@ The idle state is used exclusively to pause the local timer when the user steps 
 **官方文档**：https://learn.microsoft.com/microsoft-edge/extensions/publish/publish-extension
 **费用**：**免费**
 
+### 2.0 后台逐字段填写顺序
+
+Partner Center 的顺序和 Chrome 不同：先 Availability，再 Properties、Privacy，最后才是 Store listings。同样，`[NN]` 指 `listing-en.txt` 的块号。
+
+| # | 页面 | 字段 | 填什么 | 取自 |
+|---|---|---|---|---|
+| 1 | **Create new extension** | 上传包 | `release/TabPocket-v0.6.1.zip` | — |
+| 2 | **Availability** | Visibility | `Public` | `[13]` |
+| 3 | Availability | Markets | 默认全部市场（含未来新增） | `[13]` |
+| 4 | **Properties** | Category | `Productivity` | `[04]` |
+| 5 | Properties | Website | `https://github.com/firevenus/TabPocket` | `[15]` |
+| 6 | Properties | Support contact | `https://github.com/firevenus/TabPocket/issues` | `[15]` |
+| 7 | Properties | Mature content | 不勾 | `[15]` |
+| 8 | **Privacy** | Single purpose | 一句话 | `[07]` |
+| 9 | Privacy | Permission justification | **8 个权限逐个填** | `[08]` |
+| 10 | Privacy | Remote code | `No` | `[14]` |
+| 11 | Privacy | Data usage 分类 | 勾 **Web history** + **User activity** | `[09]` |
+| 12 | Privacy | Data usage 说明 | 两段英文 | `[10]` |
+| 13 | Privacy | Privacy policy URL | `https://firevenus.github.io/TabPocket/privacy.html` | `[06]` |
+| 14 | **Store listings** | 语言行 `English` → Edit details | 进入详情页 | — |
+| 15 | 详情页 | **Extension name / short description** | **只读**，取自 manifest，不用填 | — |
+| 16 | 详情页 | Description | 250–10,000 字符，1,818 字符 | `[03]` |
+| 17 | 详情页 | Extension logo | 300×300，1:1 | `[12]` |
+| 18 | 详情页 | Small / Large promotional tile | 可选：440×280 / 1400×560 | `[12]` |
+| 19 | 详情页 | Screenshots | 1280×800，1–10 张 | `[12]` |
+| 20 | 详情页 | YouTube video URL | 留空 | — |
+| 21 | 详情页 | **Search terms** | 见 §2.6，中英各一套 | `[16]` |
+| 22 | Store listings | 语言行 `Chinese (Simplified)` → Edit details | 填中文文案 | `listing-zh_CN.txt` |
+| 23 | **Submit** | Notes for certification | 审核员操作指引 | `[17]` |
+| 24 | **Publish** | — | 审核最多 7 个工作日 | — |
+
+> ⚠️ 第 15 步是最容易懵的地方：Edge 的扩展名称和短描述**没有输入框**，直接读包里的 manifest。想改名只能改 `_locales` 并升版本号重传。我们已经是 `__MSG_extName__` 写法，所以中英两个语言页都会自动出现在 Store listings 里。
+
 ### 2.1 注册
 
 1. 用 **Microsoft 账号**（Outlook / Hotmail / Live）登录 Partner Center；也支持用 GitHub 登录（会给你创建一个 MSA）
@@ -189,7 +255,7 @@ The idle state is used exclusively to pause the local timer when the user steps 
 ### 2.2 创建扩展
 
 1. Partner Center → **Edge** 工作区 → **Create new extension**
-2. 拖入同一个 zip（`TabPocket-v0.6.1-edge.zip`），系统会立即校验
+2. 拖入同一个 zip（`release/TabPocket-v0.6.1.zip`），系统会立即校验
 3. ⚠️ **Edge 的名称和短描述直接取自 manifest，且在后台是只读的**。我们的 manifest 用的是 `__MSG_extName__` + `default_locale: en`，所以 Edge 上会显示 **TabPocket — Tab & Bookmark Manager** 和英文短描述。想改名字只能改 manifest、升版本号、重新上传
 
 ### 2.3 Availability（上架范围）
@@ -216,10 +282,62 @@ The idle state is used exclusively to pause the local timer when the user steps 
 
 ### 2.6 Store listing（每个语言一页）
 
-- **Description**：250–10,000 字符。粘贴 §1.4 的英文详细描述（我们有 en + zh_CN 两个 locale，理论上会生成两页；只有 en 页也可以先发）
-- **Extension logo**：1:1，推荐 300×300（最低 128×128）——直接用 `public/icon/128.png` 或放大版
-- **截图**：同 Chrome 要求（1280×800 或 640×400）
-- **搜索关键词**：`tabs`, `tab manager`, `session manager`, `bookmarks`, `bookmark manager`, `read later`, `productivity`, `browsing statistics`, `history`
+- **Description**：250–10,000 字符。粘贴 `listing-en.txt` `[03]`（1,818 字符，两家都够）。中英各一页，中文页贴 `listing-zh_CN.txt` `[03]`
+- **Extension logo**：1:1，推荐 300×300（最低 128×128）——用 `release/store/icon-512.png` 缩到 300，别用透明的 128
+- **截图**：1280×800 或 640×400，1–10 张（比 Chrome 宽松）
+- **Search terms**：见下
+
+#### 搜索词的真实限制（三条，缺一不可）
+
+官方文档原文的三条约束：
+
+| 限制 | 值 |
+|---|---|
+| 条数 | **最多 7 条**（单词或短语都算一条） |
+| 总词数 | **最多 21 个单词**（不管怎么拆，加起来不能超） |
+| 单条长度 | **每条最多 30 字符** |
+
+> 旧版这份指南在这里列了 9 个词，**超过 7 条上限，照填会被后台拦下**。下面两套是按真实限制做过验算的。
+
+**英文（7 条 / 15 词 / 最长 21 字符）**
+
+```
+tab manager
+session manager
+bookmark manager
+bookmark audit
+read later
+browsing time tracker
+tab session
+```
+
+单行版（后台若只有一个输入框，用逗号隔开）：
+
+```
+tab manager, session manager, bookmark manager, bookmark audit, read later, browsing time tracker, tab session
+```
+
+**中文（7 条 / 7 词 / 最长 5 字）**
+
+```
+标签页管理
+标签收拢
+标签页整理
+书签管理
+收藏夹整理
+书签体检
+浏览统计
+```
+
+单行版：
+
+```
+标签页管理, 标签收拢, 标签页整理, 书签管理, 收藏夹整理, 书签体检, 浏览统计
+```
+
+**为什么中文不能直接译英文那组**：中文用户的断词和输入习惯跟英文不同。「tab manager」直译成「标签管理器」不如「标签页管理」贴近真实输入；「bookmark audit」直译「书签审计」几乎没人搜，中文用户说的是「收藏夹整理」「书签体检」。这组是按中文常见说法写的，不是英文列表的译文。
+
+**Chrome 没有这个字段**：Chrome 的搜索权重来自标题、摘要和描述里的自然用词，所以 `[01][02][03]` 三处的措辞本身就在做 SEO —— 别为了塞词把它们写坏（关键词堆砌是明确的封禁理由）。
 
 ### 2.7 提交
 
@@ -250,6 +368,9 @@ No network requests are made by the extension. No remote code.
 | 费用 | 一次性 $5 | 免费 |
 | 账号 | Google 账号 + **必须开两步验证** | Microsoft 账号（不支持公司/学校账号） |
 | 名称/简介来源 | 商店页可单独填 | **读 manifest，后台只读** |
+| 详细描述上限 | 16,000 字符 | 250–10,000 字符 |
+| 搜索词字段 | **无**，靠标题/描述里的自然用词 | **有**，每语言独立：≤7 条 / ≤21 词 / 单条 ≤30 字符 |
+| 语言页 | 每个语言一套 listing，可只发英文 | 由包内 `_locales` 决定出现哪几个语言页 |
 | 审核时长 | 数小时 ~ 数天（敏感权限可能数周） | 1–7 个工作日 |
 | 更新 | 版本号必须严格递增，不能回退 | 同上 |
 | 数据声明 | Privacy practices（更细：分类勾选 + 三项认证） | Privacy 页（单用途/权限/远程代码/数据使用） |
@@ -344,14 +465,20 @@ python scripts/make-screenshots.py --check
 
 ```bash
 # 1. 改代码
-# 2. 升版本（三处保持一致：manifest.json / package.json）
-#    Chrome 规定：新版本号必须严格大于线上版本，且不能回退
-# 3. 构建
+# 2. 升版本：manifest.json 与 package.json 两处必须一致
+#    Chrome 规定新版本号必须严格大于线上版本，且不能回退（审核失败的版本号也不能复用）
+# 3. 构建（重建 dist/chrome-mv3）
 npm run build
-# 4. 打包（manifest.json 必须在压缩包根部）
-#    可以直接用 release/ 下的目录重新压
+# 4. 打包 + 校验，一条命令
+python scripts/package.py
+#    产物：release/TabPocket-v<新版本>.zip
+#    校验不过会打印 [FAIL] 并以退出码 1 结束，此时别上传
 # 5. 后台 → 该扩展 → Upload new package → 提交审核
 ```
+
+校验脚本查六项：`manifest.json` 在根部、没套目录、版本号三方一致、包里没有源码/map/杂物、必需入口与图标齐全、与 `dist` 逐字节一致。只查已有的包：`python scripts/package.py --check`。
+
+⚠️ 本地开发时，`npm run build` 会把 `dist` 改名重建，正在运行的扩展后台会失联（表现为统计不记数）。构建后去 `edge://extensions` 点一次「重新加载」。
 
 ⚠️ **加新权限会重新触发完整审核**，能不加以不加。
 
@@ -359,11 +486,18 @@ npm run build
 
 ---
 
-## 7. 现在就能做的三件事（按顺序）
+## 7. 现在还差什么（按顺序）
 
-1. 部署隐私政策（§4），拿到 URL
-2. 注册两个开发者账号（Chrome 先付 $5，Edge 免费）
-3. 截 4 张图（§5），然后按 §1、§2 填表提交
+| # | 事项 | 状态 |
+|---|---|---|
+| 1 | 隐私政策上线（§4） | ✅ 已完成，URL 可用 |
+| 2 | 打包与校验 | ✅ 已完成，`release/TabPocket-v0.6.1.zip` 六项校验通过 |
+| 3 | 中英文上架文案 | ✅ 已完成，`release/store/listing-en.txt` / `listing-zh_CN.txt` |
+| 4 | **注册两个开发者账号** | ⚠️ **只剩这件卡时间**：Chrome $5 + 两步验证，Edge 免费 |
+| 5 | 截 4 张图（§5） | ⚠️ 待截图，丢进 `release/screenshots/raw/` 后跑合成脚本 |
+| 6 | 照 §1.0 / §2.0 填表提交 | 等 4、5 完成 |
+
+账号注册是唯一需要等外部审核的环节，其余都能在本地做完。建议先把它办掉。
 
 ---
 
