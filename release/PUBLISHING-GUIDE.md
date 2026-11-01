@@ -37,14 +37,14 @@
 
 后台左侧是四个页签 + 提交页。**括号里的 `[NN]` 是块号**——去 `release/store/paste/en/` 找对应的 txt（文件名前缀就是块号），**全选复制那个文件**即可。
 
-> ⚠️ **`listing-en.txt` 本身不能粘进任何输入框。** 它是母版，约 15,000 字符里大半是给人看的说明。曾经整份粘进描述框，正文只占 1,818 字符，剩下的全是 "PASTE ORDER — CHROME …"。要用的是 `paste/` 目录下拆好的单字段文件。
+> ⚠️ **`listing-en.txt` 本身不能粘进任何输入框。** 它是母版，约 15,000 字符里大半是给人看的说明。曾经整份粘进描述框，正文只占 2,154 字符，剩下的全是 "PASTE ORDER — CHROME …"。要用的是 `paste/` 目录下拆好的单字段文件。
 
 | # | 页签 → 字段 | 填什么 | 取自 |
 |---|---|---|---|
 | 1 | **Package**（上传后只读） | 核对版本号是否为 `0.6.1` | — |
 | 2 | **Store listing → Name** | `TabPocket — Tab & Bookmark Manager` | `[01]` |
 | 3 | **Store listing → Summary** | 130 字符那句（上限 132） | `[02]` |
-| 4 | **Store listing → Description** | 长文，1,818 字符（上限 16,000） | `[03]` |
+| 4 | **Store listing → Description** | 长文，2,154 字符（上限 16,000） | `[03]` |
 | 5 | **Store listing → Category** | `Productivity` | `[04]` |
 | 6 | **Store listing → Language** | `English`（主语言，另有中文页另填） | `[05]` |
 | 7 | **Store listing → 图片** | 图标传 `release/store/icon-128.png`（必须恰好 128×128）；截图传 `release/screenshots/*-en.png` 成品；宣传图块传 `release/store/promo/tile-small-440x280.png` 与 `tile-large-1400x560.png` | `[12]` |
@@ -288,10 +288,10 @@ Partner Center 的顺序和 Chrome 不同：先 Availability，再 Properties、
 | 13 | Privacy | Privacy policy URL | `https://firevenus.github.io/TabPocket/privacy.html` | `[06]` |
 | 14 | **Store listings** | 语言行 `English` → Edit details | 进入详情页 | — |
 | 15 | 详情页 | **Extension name / short description** | **只读**，取自 manifest，不用填 | — |
-| 16 | 详情页 | Description | 250–10,000 字符，1,818 字符 | `[03]` |
+| 16 | 详情页 | Description | 250–10,000 字符，2,154 字符 | `[03]` |
 | 17 | 详情页 | Extension logo | 300×300，1:1 | `[12]` |
 | 18 | 详情页 | Small / Large promotional tile | 可选：440×280 / 1400×560 | `[12]` |
-| 19 | 详情页 | Screenshots | 1280×800，1–10 张 | `[12]` |
+| 19 | 详情页 | Screenshots | 1280×800 或 **640×480**，**最多 6 张** | `[12]` |
 | 20 | 详情页 | YouTube video URL | 留空 | — |
 | 21 | 详情页 | **Search terms** | 见 §2.6，中英各一套 | `[16]` |
 | 22 | Store listings | 语言行 `Chinese (Simplified)` → Edit details | 填中文文案 | `listing-zh_CN.txt` |
@@ -342,14 +342,15 @@ Partner Center 的顺序和 Chrome 不同：先 Availability，再 Properties、
 - **Data usage 说明** → 有框就粘 `10-data-usage-text.txt`，**Chrome 与 Edge 现在的表单都没有这个框**，别为找它耗时间
 - **Privacy policy URL** → `https://firevenus.github.io/TabPocket/privacy.html`（同 §4）
 
-Edge 的发布闸口和 Chrome 一样是「一次列全部缺口」，报错文案是「必须提供使用 xxx 权限的理由」。**但 Edge 少一条**：它没有 Chrome 那个底部「确认数据使用符合开发者计划政策」的勾选框，取而代之是在提交页勾选同意 Edge 的开发者政策。
+Edge 的发布闸口和 Chrome 一样是「一次列全部缺口」，报错文案是「必须提供使用 xxx 权限的理由」。**认证那一块两家也有**：Edge 的「I certify that the following disclosures are true」同样是三个勾，必须全选，漏勾发布按钮不亮。区别只在措辞和位置——Chrome 单独占一段、Edge 紧跟数据使用分类下面。
 
 
 ### 2.6 Store listing（每个语言一页）
 
-- **Description**：250–10,000 字符。粘贴 `paste/en/03-description.txt`（1,818 字符，两家都够）。中英各一页，中文页贴 `paste/zh_CN/03-description.txt`
+- **Description**：250–10,000 字符。粘贴 `paste/en/03-description.txt`（2,154 字符，两家都够）。中英各一页，中文页贴 `paste/zh_CN/03-description.txt`
 - **Extension logo**：1:1，推荐 300×300（最低 128×128）——直接传 `release/store/icon-300.png`（已按 300×300 生成好，不用自己缩）
-- **截图**：1280×800 或 640×400，1–10 张（比 Chrome 宽松）。用 `release/screenshots/` 下的成品，别传 `raw/`
+- **截图**：1280×800 或 **640×480**（Edge 没有 640×400 那一档，那是 Chrome 的），**最多 6 张**。用 `release/screenshots/` 下的成品，别传 `raw/`
+- **上传后点 Duplicate**：logo、两张图块、截图每个字段下面都有 Duplicate，把英文那套一键复制到中文页，不用重复传五遍
 - **Search terms**：见下
 
 #### 搜索词的真实限制（三条，缺一不可）
@@ -406,7 +407,7 @@ tab manager, session manager, bookmark manager, bookmark audit, read later, brow
 
 ### 2.7 提交
 
-**Certification testing notes** 里写一段给审核员看的操作指引（提高过审效率）：
+**Notes for certification**（在 Store listings 每行状态变成 `Complete`、点右上 **Publish** 之后打开的那个页面里填，不在这里）写一段给审核员看的操作指引：
 
 ```
 No account or credentials are needed. Everything runs locally.
@@ -421,7 +422,15 @@ How to test:
 No network requests are made by the extension. No remote code.
 ```
 
-点 **Publish / Submit**。审核通常 **1–7 个工作日**。
+**这一步别省**。扩展刚装是空的，审核员打开 popup 什么数据都没有，很可能判「功能不完整或无法使用」。一段操作指引能直接把这类误拒挡掉。
+
+点 **Publish** 后进入认证，通常 **1–7 个工作日**。通过后状态变 `In the Store`。
+
+#### 语言页是自动出现的，不是手加的
+
+Partner Center 靠包内 `_locales/*/messages.json` 里的 i18n 键来判断有哪些语言。本项目的 manifest 用 `__MSG_extName__` / `__MSG_extDesc__`，两个 locale 的 messages.json 都齐（已核：`en` 和 `zh_CN` 各有 `extName` / `extDesc` 两键），所以 **Store listings 里会自动出现 English 和 Chinese (Simplified) 两行**，不需要手动 Add language。
+
+如果只出现一个语言，官方给的排查方向是：manifest 的 name/description 写成了硬编码字符串（没用 `__MSG_*__`）、缺 `default_locale`、或某个 `_locales/*/messages.json` 缺对应的键。这三条我们都不占。
 
 ---
 
@@ -438,7 +447,9 @@ No network requests are made by the extension. No remote code.
 | 语言页 | 每个语言一套 listing，可只发英文 | 由包内 `_locales` 决定出现哪几个语言页 |
 | 审核时长 | 数小时 ~ 数天（敏感权限可能数周） | 1–7 个工作日 |
 | 更新 | 版本号必须严格递增，不能回退 | 同上 |
-| 数据声明 | Privacy practices（更细：分类勾选 + 三项认证） | Privacy 页（单用途/权限/远程代码/数据使用） |
+| 数据声明 | Privacy practices：单用途 + 权限 + 远程代码 + 分类勾选 + **三项认证** | Privacy 页：同样五项，**也有三项认证**，措辞不同（`I certify that the following disclosures are true`） |
+| 截图 | 1–5 张，1280×800 或 640×400 | **最多 6 张**，1280×800 或 **640×480**（没有 640×400） |
+| 宣传图块 | 440×280 / 1400×560，**可选** | 同尺寸，**可选**，且有 Duplicate 一键复制到其他语言 |
 
 > ⚠️ 两家的数据分类都**必须同时勾 Web history 和 User activity** —— `idle` 权限归在 User activity 下，只在说明文字里写"本地处理"不算数，分类勾漏了就是申报不实。
 
