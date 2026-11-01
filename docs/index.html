@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TabPocket — Local-first tab sessions, bookmarks and browsing stats</title>
+    <meta
+      name="description"
+      content="TabPocket is a local-first browser extension for collapsing tab sessions, organising bookmarks and reviewing where your browsing time goes. No account, no server, no tracking."
+    />
+    <style>
+      :root {
+        --fg: #1f2937;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --accent: #0f6e56;
+        --accent-soft: #eef6f2;
+        --bg: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 56px 20px 80px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 15px/1.75 -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+          'Microsoft YaHei', sans-serif;
+        text-align: left;
+      }
+      main { max-width: 720px; margin: 0 auto; }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+      .brand img { width: 44px; height: 44px; }
+      .brand-name { font-size: 17px; font-weight: 600; letter-spacing: 0.2px; }
+      .brand-name span { color: var(--muted); font-weight: 400; margin-left: 6px; }
+      h1 { font-size: 30px; line-height: 1.35; margin: 0 0 14px; letter-spacing: -0.3px; }
+      h2 {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin: 42px 0 14px;
+        font-weight: 600;
+      }
+      p { margin: 0 0 14px; }
+      .lead { font-size: 16px; color: #374151; }
+      ul.features { list-style: none; padding: 0; margin: 0; }
+      ul.features li {
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        margin-bottom: 10px;
+        background: #fcfdfc;
+      }
+      ul.features b { display: block; font-size: 14.5px; margin-bottom: 2px; }
+      ul.features span { color: var(--muted); font-size: 13.5px; }
+      .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+      .links a {
+        display: inline-block;
+        padding: 9px 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--fg);
+        text-decoration: none;
+        font-size: 14px;
+      }
+      .links a.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .links a:hover { border-color: var(--accent); }
+      .note {
+        background: var(--accent-soft);
+        border-radius: 10px;
+        padding: 14px 16px;
+        font-size: 13.5px;
+        color: #374151;
+      }
+      hr { border: 0; border-top: 1px solid var(--line); margin: 48px 0 32px; }
+      .zh h1 { font-size: 26px; }
+      footer { margin-top: 44px; color: var(--muted); font-size: 12px; }
+      a { color: var(--accent); }
+      code {
+        background: #f3f5f4;
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="brand">
+        <img src="icon-128.png" alt="TabPocket icon" />
+        <div class="brand-name">TabPocket<span>页袋</span></div>
+      </div>
+
+      <h1>Tabs, bookmarks and browsing time — all kept on your own machine.</h1>
+      <p class="lead">
+        A local-first browser extension for people who keep 60 tabs open. Collapse them into
+        a session, clean up the bookmarks you never open, and see where the hours actually
+        went. No account. No server. No tracking.
+      </p>
+
+      <div class="links">
+        <a class="primary" href="https://github.com/firevenus/TabPocket">View on GitHub</a>
+        <a href="privacy.html">Privacy policy</a>
+      </div>
+
+      <h2>What it does</h2>
+      <ul class="features">
+        <li>
+          <b>Tab sessions</b>
+          <span
+            >Collapse a whole window into one saved session, then restore it later — titles,
+            order and URLs intact.</span
+          >
+        </li>
+        <li>
+          <b>Bookmarks without the mess</b>
+          <span
+            >Bring native bookmarks and your own saved items into one list, then sort them by
+            how often you actually visit them.</span
+          >
+        </li>
+        <li>
+          <b>Bookmark audit</b>
+          <span
+            >See which bookmarks you have not touched in a year, by page or by site, and
+            export the result as CSV.</span
+          >
+        </li>
+        <li>
+          <b>Browsing statistics</b>
+          <span
+            >Foreground time per domain and per hour, aggregated in IndexedDB so the chart
+            stays fast however long you use it.</span
+          >
+        </li>
+      </ul>
+
+      <h2>How it handles your data</h2>
+      <p class="note">
+        Everything is stored in your own browser profile — <code>chrome.storage.local</code>
+        and IndexedDB. There is no backend to send it to: no analytics, no telemetry, no
+        advertising SDK, no remote code. Uninstalling the extension deletes its data.
+      </p>
+
+      <hr />
+
+      <section class="zh" lang="zh-CN">
+        <h1>标签、收藏与浏览时长，全部留在你自己电脑上。</h1>
+        <p class="lead">
+          给同时开六十个标签页的人做的本地扩展。把一窗标签收拢成一个会话，清掉那些收藏之后就再没打开过的书签，再看看时间到底花在了哪。没有账号、没有服务器、不做追踪。
+        </p>
+
+        <h2>功能</h2>
+        <ul class="features">
+          <li>
+            <b>标签会话</b>
+            <span>把整个窗口收拢成一个会话，之后一键恢复，标题、顺序、网址都不变。</span>
+          </li>
+          <li>
+            <b>收藏整理</b>
+            <span>把浏览器原生书签和扩展内收藏汇到一处，可按真实访问频次排序。</span>
+          </li>
+          <li>
+            <b>收藏体检</b>
+            <span>找出一年没打开过的书签，按页面或按网站两个视角看，结果可导出 CSV。</span>
+          </li>
+          <li>
+            <b>浏览统计</b>
+            <span>按域名与小时聚合前台停留时长，数据存 IndexedDB，用多久都不会越算越慢。</span>
+          </li>
+        </ul>
+
+        <h2>数据怎么处理</h2>
+        <p class="note">
+          数据只存在你自己的浏览器里（<code>chrome.storage.local</code> 与
+          IndexedDB）。扩展没有后端可以上传：无统计分析、无遥测、无广告 SDK、无远程代码。卸载即删除本地数据。
+        </p>
+      </section>
+
+      <footer>
+        MIT License · © 2026 Enki Yan (firevenus) ·
+        <a href="https://github.com/firevenus/TabPocket/issues">Issues</a> ·
+        <a href="privacy.html">Privacy / 隐私政策</a>
+      </footer>
+    </main>
+  </body>
+</html>

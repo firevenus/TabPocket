@@ -16,7 +16,7 @@
 | 详细描述 | ✅ 本文给 | 英文版 + 中文版 |
 | 单一用途说明（Single purpose） | ✅ 本文给 | §1.5 |
 | 每个权限的理由 | ✅ 本文给 | §1.5 |
-| 隐私政策 URL | ⚠️ 要部署 | 已写好 `docs/privacy.html`，见 §4 |
+| 隐私政策 URL | ✅ 已上线 | https://firevenus.github.io/TabPocket/privacy.html （见 §4） |
 | Google 账号 + 两步验证 + $5 | ⚠️ 要准备 | 一次性，账号级，不是每个扩展收 |
 | Microsoft 账号（Outlook/Hotmail） | ⚠️ 要准备 | Edge 免费 |
 
@@ -144,7 +144,7 @@ The idle state is used exclusively to pause the local timer when the user steps 
 
 下面的三项认证（不出售数据 / 不用于无关用途 / 不用于信用评估）**全部勾选**——这是真的。
 
-**Privacy policy URL**：填 §4 部署后的地址。
+**Privacy policy URL**：`https://firevenus.github.io/TabPocket/privacy.html`（**带文件名**，不要只填域名根路径）
 
 ### 1.6 分发设置
 
@@ -212,7 +212,7 @@ The idle state is used exclusively to pause the local timer when the user steps 
 - **Permission justification**：逐条粘贴 §1.5 表格里的英文
 - **Remote code**：选 **"No, I am not using remote code"**（确实没有）
 - **Data usage**：**Web history 和 User activity 两项都勾**（`idle` 属后者，漏勾＝申报不实），说明填 §1.5 那两段英文
-- **Privacy policy URL**：同 §4 的地址
+- **Privacy policy URL**：`https://firevenus.github.io/TabPocket/privacy.html`（同 §4）
 
 ### 2.6 Store listing（每个语言一页）
 
@@ -262,17 +262,27 @@ No network requests are made by the extension. No remote code.
 
 已经写好 `docs/privacy.html`（中英对照，单文件、无依赖）。三种做法任选：
 
-**A. 用现有 GitHub 仓库开 Pages（推荐，免费）**
+**A. 用现有 GitHub 仓库开 Pages（推荐，免费）—— ✅ 已就绪**
+
+`docs/` 下三个文件，Pages 源已设为 `main` / `docs`：
+
+| 文件 | 线上地址 |
+|---|---|
+| `index.html`（项目落地页） | https://firevenus.github.io/TabPocket/ |
+| `privacy.html`（隐私政策，中英对照） | https://firevenus.github.io/TabPocket/privacy.html |
+| `icon-128.png`（落地页图标） | — |
+| `.nojekyll`（关掉 Jekyll 处理，避免下划线文件被吞） | — |
+
+**商店后台的「Privacy policy URL」必须填带 `privacy.html` 的完整地址。** 只填根路径 `https://firevenus.github.io/TabPocket/` 打开的是落地页而不是政策正文，审核员找不到内容会打回。
+
+验收命令（应分别返回 `200`）：
 
 ```bash
-# 在仓库根目录
-mkdir docs && cp docs/privacy.html docs/index.html   # 已有 privacy.html
-git add docs && git commit -m "docs: add privacy policy" && git push
-# GitHub → 仓库 Settings → Pages → Source: main / docs → Save
-# 得到 https://firevenus.github.io/TabPocket/
+curl -sSo /dev/null -w "%{http_code}\n" https://firevenus.github.io/TabPocket/
+curl -sSo /dev/null -w "%{http_code}\n" https://firevenus.github.io/TabPocket/privacy.html
 ```
 
-隐私政策 URL 填 `https://firevenus.github.io/TabPocket/`
+> 注意 Pages 只会找 `index.html` / `index.htm` / `README.md` 当首页；目录里只有 `privacy.html` 时根路径会 404，但政策页本身是正常的。
 
 **B. 挂到你已有的站点**：`enki-yan.pages.dev` 或 `firevenus.github.io` 下开个子路径，把 HTML 传上去即可。
 
